@@ -5,4 +5,4 @@ Integrantes:
 Jesús Herrada,
 Jesús Muñoz,
 Samuel Reyna, 
-José Contin,
+José Contin
