@@ -12,7 +12,7 @@ pthread_t drones[N_DRONES_PR]; //definicion de un array de 25 drones (hilos)
 int main(int argc, char const *argv[]){
     
 
-
+    //
 
 
 
