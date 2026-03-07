@@ -21,7 +21,7 @@
 #define BRAZOS 3    
 
 typedef struct {
-    int tipo_producto;              //0: Tipo Estandar; 1:Tipo Refrigerado; 2:Tipo Ultra-Procesado
+    int tipo_producto;              //0: Tipo Estandar; 1:Tipo Refrigerado; 2:Tipo Ultra-delicado
     struct timespec tiempo_inicio;  //Lleva el tiempo que el producto desde que entro en el programa
 
 } Producto;
