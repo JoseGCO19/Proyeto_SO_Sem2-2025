@@ -1,14 +1,24 @@
 #ifndef MAIN_H
 #define MAIN_H
 
+// Colores ANSI
+#define COLOR_ROJO     "\x1b[31m"
+#define COLOR_VERDE    "\x1b[32m"
+#define COLOR_AMARILLO "\x1b[33m"
+#define COLOR_AZUL     "\x1b[34m"
+#define COLOR_RESET    "\x1b[0m"
+
 #include <semaphore.h>
 #include <pthread.h>
+#include <time.h>
 
-#define N_DRONES_PR 25
-#define CAP_ZONA_DESCARGA 10
+#define N_DRONES_PR 3
+#define CAP_ZONA_DESCARGA 2
 
 typedef struct {
     int tipo_producto;
+    struct timespec tiempo_inicio;
+
 } Producto;
 
 // Declaración de variables globales (EXPORT)
