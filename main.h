@@ -11,8 +11,8 @@
 #include <semaphore.h>
 #include <pthread.h>
 #include <time.h>
-#include<unistd.h>
-#include<stdio.h>
+#include <unistd.h>
+#include <stdio.h>
 
 #define N_DRONES_PR 3
 #define CAP_ZONA_DESCARGA 2
@@ -76,5 +76,11 @@ extern sem_t sem_plataforma_levitacion;
 extern pthread_mutex_t mutex_metricas_levitacion;
 extern double tiempo_total_acum;
 extern int productos_procesados;
+
+//Semaforos de depositos
+extern sem_t deposito_libre[TOTAL_DEPOSITOS];
+extern pthread_mutex_t mutex_almacen;
+extern sem_t sem_llamar_operario;
+extern pthread_mutex_t mutex_dronCarga;
 
 #endif
