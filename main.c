@@ -30,6 +30,18 @@ sem_t sem_fin_des; //semaforo para validar, que el agente ya proceso el id y bat
 sem_t sem_espacios_vacios; //semafor para el buffer , inicializado en CAP_ZONA_DESCARGA
 sem_t sem_elementos_disp; // inicializado en 0
 pthread_mutex_t mutex_buffer; //iniciarlizar en 1
+pthread_mutex_t mutex_buffer_descarga; //este sera para cuando un brazo, intente sacar un producto del buffer(almacen)
+sem_t sem_drones_carga; //inicializar en 1
+pthread_mutex_t mutex_metricas; //mutex para el acceso a la variable de control de bloqueos evitados
+extern int bloqueos_evitados=0; //para contabilizar los bloqueos evitados
+pthread_mutex_t mutex_buzon; 
+int buzon_id_brazo;
+sem_t sem_iniciar_viaje_dron; //inicializado en 0 (despierta a los drones de carga)
+sem_t sem_fin_viaje_brazo[3]; //arreglo de 3 semaforos inicializados en 0( 1 para cada brazo)
+sem_t sem_plataforma_levitacion; //inicializada en 1
+pthread_mutex_t mutex_metricas_levitacion; //paara acceder a la variables uso de plataforma de levitacion 
+int uso_plataforma_levitacion=0;
+int productos_procesados=0; //productos totales procesados
 
 int main(int argc, char const *argv[]){
     
@@ -65,9 +77,7 @@ int main(int argc, char const *argv[]){
     pthread_mutex_destroy(&mutex_buffer);
     */
     printf("Sistema iniciado. Presiona Ctrl+C para salir.\n");
-    while(1) {
-        sleep(1); 
-    }
+    printf("\nEl tiempo tomado es: %ld segundos %ld nanosegundos.\n", );
 
     return 0;
 }
