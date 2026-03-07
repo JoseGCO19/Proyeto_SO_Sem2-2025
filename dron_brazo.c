@@ -10,14 +10,16 @@ long calcular_ms(struct timespec inicio, struct timespec fin) {
 
 void* brazo_clasificado( void *arg){
 
+    Producto nuevo_pr_saliente;
     int id_brazo = *((int*)arg);
     while (1){
         //FASE 1: extraccion del producto
         sem_wait(&sem_elementos_disp); //espera a que el dron recolector le avise que ya hay recursos disponibles en el almacen
         pthread_mutex_lock(&mutex_buffer_descarga); //para que solo 1 proceso hilo pueda sacar un recurso
         //SECION CRITICA 
-        Producto nuevo_pr_saliente= buffer_descarga[indice_producto]; //ademas se protege el uso de indice_producto y el buffer
-        printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomo producto en la posicion %d del almacen", id_brazo,indice_producto);
+        nuevo_pr_saliente= buffer_descarga[indice_producto]; //ademas se protege el uso de indice_producto y el buffer
+        printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomó un producto %s en la posicion %d del almacen termporal", id_brazo, 
+            tipo_producto_str[nuevo_pr_saliente.tipo_producto], indice_producto);
         indice_producto = (indice_producto +1) % CAP_ZONA_DESCARGA; 
         pthread_mutex_unlock(&mutex_buffer_descarga); //da espacio al siguiente
         //FASE 2: DESPACHO

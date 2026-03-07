@@ -43,6 +43,7 @@ sem_t sem_plataforma_levitacion; //inicializada en 1
 pthread_mutex_t mutex_metricas_levitacion; //paara acceder a la variables uso de plataforma de levitacion 
 int usos_plataforma=0;
 int productos_procesados=0; //productos totales procesados
+const char tipo_producto_str[3][20] = {"Estándar", "Refrigerado", "Ultradelicado"}; //para imprimir el tipo de producto en texto
 
 int main(int argc, char const *argv[]){
     
