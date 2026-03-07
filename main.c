@@ -47,7 +47,7 @@ int main(int argc, char const *argv[]){
     pthread_create(&hilo_agente, NULL, agente_desinfeccion, NULL); 
     //creacion de los hilos para los drones
     for (int i = 0; i < N_DRONES_PR; i++){
-        ids_drones[i]=i; //asignacion de los ids unicos 
+        ids_drones[i]=i+1; //asignacion de los ids unicos 
         pthread_create(&drones[i], NULL, dron_recolector,&ids_drones[i]);
     }
     /*
