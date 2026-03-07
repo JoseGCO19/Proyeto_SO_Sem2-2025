@@ -14,22 +14,23 @@ void* dron_recolector(void* arg);
 //Samuel lafffkkkkk
 //estructura para el producto
 
+/**/
 //estructura para el buffer de descarga , asumiendo una capacidad para 10 productos
 Producto buffer_descarga[CAP_ZONA_DESCARGA]; //buffer 
-int indice_producto = 0; //para desplazarse a traves del buffer 
-pthread_t drones[N_DRONES_PR]; //definicion de un array de 25 drones (hilos)
+int indice_producto = 0;                    //para desplazarse a traves del buffer 
+pthread_t drones[N_DRONES_PR];              //definicion de un array de 25 drones (hilos)
 //falta definir si es global o local al main ??
-int ids_drones[N_DRONES_PR]; // para almacenar los id de todos los drones
+int ids_drones[N_DRONES_PR];                // para almacenar los id de todos los drones
 //definicion de los semaforos de interaccion entre drop_recolector y agente_desifeccion
-sem_t sem_cap_recoleccion; //semaforo contador de dron recolector (25 disponibles)
-pthread_mutex_t sem_sala_desinfeccion; //semaforo para controlar la espera a la sala de desinfeccion , inicializado en 1
-sem_t sem_agente_des; //semaforo para el agente de desifeccion inicializado en 0, dado que hay un solo agente
-//el agente de desinfeccion debe esperar a que un dron lo llame
-sem_t sem_fin_des; //semaforo para validar, que el agente ya proceso el id y bateria del semaforo, inicializado en 0
+sem_t sem_cap_recoleccion;                  //semaforo contador de dron recolector (25 disponibles)
+pthread_mutex_t sem_sala_desinfeccion;      //semaforo para controlar la espera a la sala de desinfeccion , inicializado en 1
+sem_t sem_agente_des;                       //semaforo para el agente de desifeccion inicializado en 0, dado que hay un solo agente
+                                            //el agente de desinfeccion debe esperar a que un dron lo llame
+sem_t sem_fin_des;                          //semaforo para validar, que el agente ya proceso el id y bateria del semaforo, inicializado en 0
 //semaforos para la zona de carga
-sem_t sem_espacios_vacios; //semafor para el buffer , inicializado en CAP_ZONA_DESCARGA
-sem_t sem_elementos_disp; // inicializado en 0
-pthread_mutex_t mutex_buffer; //iniciarlizar en 1
+sem_t sem_espacios_vacios;                  //semafor para el buffer , inicializado en CAP_ZONA_DESCARGA
+sem_t sem_elementos_disp;                   // inicializado en 0
+pthread_mutex_t mutex_buffer;               //iniciarlizar en 1
 
 int main(int argc, char const *argv[]){
     
