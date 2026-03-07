@@ -6,12 +6,13 @@
 #define N_DRONES_PR 25
 #define CAP_ZONA_DESCARGA 10 //limite para el buffer de carga
 
-//Soy samuel, estoy dentro
+
 //estructura para el producto
 typedef struct {
     int tipo_producto; //0:estandar, 1: regrigerado, 2: ultra_delicado
     //metricas del tiempo
 }Producto;
+
 //estructura para el buffer de descarga , asumiendo una capacidad para 10 productos
 Producto buffer_descarga[CAP_ZONA_DESCARGA]; //buffer 
 int indice_producto = 0; //para desplazarse a traves del buffer 
@@ -43,7 +44,7 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         pthread_mutex_lock(&sem_sala_desinfeccion); //solo permitira el acceso a un dron de recoleccion al la sala de desinfeccion
         printf("\nDron[%d] iniciando proceso de desinfeccion.\n", id_dron);
         //despierta al hilo del agente de desinfeccion para que atienda al dron entrante
-        sem_post(&sem_agente_des); //lo despierta
+        sem_post(&sem_agente_des); 
         //el dron espera a que el agente valide su id y su bateria
         sem_wait(&sem_fin_des); 
         //el dron ya esta limpio, libera el espacio para el siguiente dron
