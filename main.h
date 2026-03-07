@@ -17,6 +17,8 @@
 #define N_DRONES_PR 3
 #define CAP_ZONA_DESCARGA 2
 #define TOTAL_DEPOSITOS 7
+#define M_DONES_CARGA 4
+#define BRAZOS 3    
 
 typedef struct {
     int tipo_producto;              //0: Tipo Estandar; 1:Tipo Refrigerado; 2:Tipo Ultra-Procesado
@@ -42,8 +44,17 @@ extern int indice_deposito_refrigerado;             //Lleva el indice del vector
 extern pthread_mutex_t mutex_buffer;                //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
 extern Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer donde se almacenaran los productos
 extern int indice_producto;                         //lleva el conteo de cuantos productos hay
+//Hilos e ID's
 extern pthread_t drones[N_DRONES_PR];               //Hilos de los drones
 extern int ids_drones[N_DRONES_PR];                 //ID's de los Drones de Recoleccion
+extern pthread_t drones_carga[M_DONES_CARGA];
+extern int ids_drones_carga[M_DONES_CARGA];
+extern pthread_t brazo[BRAZOS];
+extern int ids_brazo[BRAZOS];
+extern pthread_t operador_almacen;
+extern int ids_operador_almacen;
+
+
 
 //contadores de resultados
 extern int usos_plataforma;                         //Variable que cuenta los usos que tuvo la plataforma magnetica a lo largo del programa

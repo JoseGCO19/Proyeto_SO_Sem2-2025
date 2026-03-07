@@ -50,7 +50,7 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         
         //FASE 5: salida del centro
         //el dron termino su fase de ejecucion , sale del recinto liberando un espacio
-        printf(COLOR_AMARILLO"\n Drone[%d]" COLOR_RESET", ha salido de la granja. volviendo a la cola externa...\n",id_dron);
+        printf(COLOR_AMARILLO"\nDrone[%d]" COLOR_RESET", ha salido de la granja. Volviendo a la cola externa...\n",id_dron);
         sem_post(&sem_cap_recoleccion);
         sleep(2);
     }
