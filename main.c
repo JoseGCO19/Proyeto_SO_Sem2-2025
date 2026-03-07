@@ -78,7 +78,7 @@ int main(int argc, char const *argv[]){
     pthread_mutex_destroy(&mutex_buffer);
     */
     printf("Sistema iniciado. Presiona Ctrl+C para salir.\n");
-    printf("\nEl tiempo tomado es: %ld segundos %ld nanosegundos.\n", );
+    //printf("\nEl tiempo tomado es: %ld segundos %ld nanosegundos.\n", );
 
     return 0;
 }
