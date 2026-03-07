@@ -10,10 +10,6 @@
 void* agente_desinfeccion(void* arg);
 void* dron_recolector(void* arg);
 
-//Jesus crisrto
-//Samuel lafffkkkkk
-//estructura para el producto
-
 /**/
 //estructura para el buffer de descarga , asumiendo una capacidad para 10 productos
 Producto buffer_descarga[CAP_ZONA_DESCARGA]; //buffer 
@@ -38,11 +34,20 @@ extern int bloqueos_evitados=0; //para contabilizar los bloqueos evitados
 pthread_mutex_t mutex_buzon; 
 int buzon_id_brazo;
 sem_t sem_iniciar_viaje_dron; //inicializado en 0 (despierta a los drones de carga)
-sem_t sem_fin_viaje_brazo[3]; //arreglo de 3 semaforos inicializados en 0( 1 para cada brazo)
+sem_t sem_fin_viaje_brazo[BRAZOS]; //arreglo de 3 semaforos inicializados en 0( 1 para cada brazo)
 sem_t sem_plataforma_levitacion; //inicializada en 1
 pthread_mutex_t mutex_metricas_levitacion; //paara acceder a la variables uso de plataforma de levitacion 
 int usos_plataforma=0;
 int productos_procesados=0; //productos totales procesados
+
+//Cosas Añadidas por Contin
+int ids_brazos[BRAZOS];             //Para almacenar los id de todos los brazos
+pthread_mutex_t mutex_dronCarga;    //semaforo que controla que los drones de carga se asignen a un sólo brazo
+sem_t sem_llamar_operario;          //Semaforo que llama al operario para vaciar los depositos
+pthread_mutex_t mutex_almacen;      //Semaforo que controla el acceso al almacen
+int deposito[TOTAL_DEPOSITOS];      //Vector de los depositos
+sem_t deposito_libre[TOTAL_DEPOSITOS]; 
+sem_t deposito_vaciado[TOTAL_DEPOSITOS]; 
 
 int main(int argc, char const *argv[]){
     
@@ -53,8 +58,11 @@ int main(int argc, char const *argv[]){
     sem_init(&sem_agente_des,0,0); //inicializado en 0 dado que debe espera que dron_recolector lo llame
     sem_init(&sem_fin_des,0,0);
     sem_init(&sem_espacios_vacios,0,CAP_ZONA_DESCARGA); //inicializado en 10 para el buffer
-    sem_init(&sem_elementos_disp,0,0); 
+    sem_init(&sem_elementos_disp,0,0);
+    sem_init(&sem_llamar_operario,0,0); 
     pthread_mutex_init(&mutex_buffer,NULL); //para el acceso al buffer , 1 por hilo
+    pthread_mutex_init(&mutex_dronCarga,NULL); //para el acceso al viaje del dron, 1 por hilo
+    pthread_mutex_init(&mutex_almacen,NULL); //Para el acceso al almacen, 1 por hilo
 
     pthread_t hilo_agente; ///hilo para el agente
     pthread_create(&hilo_agente, NULL, agente_desinfeccion, NULL); 
@@ -62,6 +70,15 @@ int main(int argc, char const *argv[]){
     for (int i = 0; i < N_DRONES_PR; i++){
         ids_drones[i]=i+1; //asignacion de los ids unicos 
         pthread_create(&drones[i], NULL, dron_recolector,&ids_drones[i]);
+    }
+    //Inicialización del semaforo de sem_fin_viaje_brazo
+    for (int i = 0; i < BRAZOS; i++){
+        sem_init(&sem_fin_viaje_brazo,0,0);
+    }
+    //Inicialización de los semaforos de depositoLibre y deposito_vaciado
+    for (int i = 0; i < TOTAL_DEPOSITOS; i++){
+        sem_init(&deposito_libre[i],0,3);
+        sem_init(&deposito_vaciado[i],0,0);
     }
     /*
     for (int i = 0; i < N_DRONES_PR; i++){
