@@ -21,7 +21,42 @@ void* brazo_clasificado( void *arg){
         indice_producto = (indice_producto +1) % CAP_ZONA_DESCARGA; 
         pthread_mutex_unlock(&mutex_buffer_descarga); //da espacio al siguiente
         //FASE 2: DESPACHO
-        if(nuevo_pr_saliente.tipo_producto == 1){
+        despacho_dron(nuevo_pr_saliente,id_brazo);
+        struct timespec tiempo_fin;
+        clock_gettime(CLOCK_MONOTONIC,&tiempo_fin);
+        //calcular la duracion 
+        long duracion = calcular_ms(nuevo_pr_saliente.tiempo_inicio, tiempo_fin);
+        //actualizar metricas 
+        pthread_mutex_lock(&mutex_metricas);
+        tiempo_total_acum+=duracion;
+        productos_procesados++;
+        printf(COLOR_AZUL "[METRICA]" COLOR_RESET " Promedio actual: %.2f ms\n", (tiempo_total_acum / productos_procesados));
+        pthread_mutex_unlock(&mutex_metricas);
+
+        //FASE 4; DEPOSITOS Y OPERADORES DE ALMACEN
+        int target_deposito;
+        if(nuevo_pr_saliente.tipo_producto == 0)
+            target_deposito= rand() %4 ; //del o al 3
+        else if(nuevo_pr_saliente.tipo_producto == 1)
+            target_deposito = 4 + (rand() % 3); //indices del 4 al 6
+        else
+            target_deposito = 7; //indice 7
+        
+
+
+    }
+    
+
+
+
+
+
+
+    return NULL;
+}
+
+void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){
+    if(nuevo_pr_saliente.tipo_producto == 1){
             //producto refrigerado ; requiere 2 drones de carga
             while (1){
                 sem_wait(&sem_drones_carga); //este debera estar inicializadp en 4 
@@ -86,35 +121,5 @@ void* brazo_clasificado( void *arg){
             printf(COLOR_ROJO "\n BRAZO[%d] "COLOR_RESET "procesando producto estandar.\n",id_brazo);
             sleep(1);
         }
-        struct timespec tiempo_fin;
-        clock_gettime(CLOCK_MONOTONIC,&tiempo_fin);
-        //calcular la duracion 
-        long duracion = calcular_ms(nuevo_pr_saliente.tiempo_inicio, tiempo_fin);
-        //actualizar metricas 
-        pthread_mutex_lock(&mutex_metricas);
-        tiempo_total_acum+=duracion;
-        productos_procesados++;
-        printf(COLOR_AZUL "[METRICA]" COLOR_RESET " Promedio actual: %.2f ms\n", (tiempo_total_acum / productos_procesados));
-        pthread_mutex_unlock(&mutex_metricas);
 
-        //FASE 4; DEPOSITOS Y OPERADORES DE ALMACEN
-        int target_deposito;
-        if(nuevo_pr_saliente.tipo_producto == 0)
-            target_deposito= rand() %4 ; //del o al 3
-        else if(nuevo_pr_saliente.tipo_producto == 1)
-            target_deposito = 4 + (rand() % 3); //indices del 4 al 6
-        else
-            target_deposito = 7; //indice 7
-        
-
-
-    }
-    
-
-
-
-
-
-
-    return NULL;
 }
