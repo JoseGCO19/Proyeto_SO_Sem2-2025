@@ -40,7 +40,7 @@ sem_t sem_iniciar_viaje_dron; //inicializado en 0 (despierta a los drones de car
 sem_t sem_fin_viaje_brazo[3]; //arreglo de 3 semaforos inicializados en 0( 1 para cada brazo)
 sem_t sem_plataforma_levitacion; //inicializada en 1
 pthread_mutex_t mutex_metricas_levitacion; //paara acceder a la variables uso de plataforma de levitacion 
-int uso_plataforma_levitacion=0;
+int usos_plataforma=0;
 int productos_procesados=0; //productos totales procesados
 
 int main(int argc, char const *argv[]){

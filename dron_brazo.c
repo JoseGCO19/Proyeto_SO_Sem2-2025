@@ -99,11 +99,14 @@ void* brazo_clasificado( void *arg){
 
         //FASE 4; DEPOSITOS Y OPERADORES DE ALMACEN
         int target_deposito;
-        if(nuevo_pr_saliente.tipo_producto == 0){
+        if(nuevo_pr_saliente.tipo_producto == 0)
             target_deposito= rand() %4 ; //del o al 3
-        }else if(nuevo_pr_saliente.tipo_producto == 1){
+        else if(nuevo_pr_saliente.tipo_producto == 1)
             target_deposito = 4 + (rand() % 3); //indices del 4 al 6
-        }
+        else
+            target_deposito = 7; //indice 7
+        
+
 
     }
     
