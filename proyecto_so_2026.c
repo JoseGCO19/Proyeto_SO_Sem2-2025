@@ -6,7 +6,7 @@
 #define N_DRONES_PR 25
 #define CAP_ZONA_DESCARGA 10 //limite para el buffer de carga
 
-//Jesus mamon
+//Samuel lafffkkkkk
 //estructura para el producto
 typedef struct {
     int tipo_producto; //0:estandar, 1: regrigerado, 2: ultra_delicado
