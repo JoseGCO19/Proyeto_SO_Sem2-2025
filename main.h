@@ -34,4 +34,10 @@ extern int indice_producto;
 extern pthread_t drones[N_DRONES_PR];
 extern int ids_drones[N_DRONES_PR];
 
+//contadores de resultados
+extern int usos_plataforma;
+extern int producto_estandar;
+extern int producto_refrigerado;
+extern int producto_ultra_procesado;
+
 #endif
