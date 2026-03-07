@@ -18,7 +18,7 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         //ahora cada dron recolector debe esperar para pasar a la sala de desifeccion para hacer atendido por el agente de desifeccion
         //FASE 2: los drones deben entrar a la sala de espera para desinfeccion
         pthread_mutex_lock(&sem_sala_desinfeccion); //solo permitira el acceso a un dron de recoleccion al la sala de desinfeccion
-        printf( COLOR_VERDE"\nDron[%d]" COLOR_RESET "iniciando proceso de desinfeccion.\n", id_dron);
+        printf( COLOR_VERDE"\nDron[%d]" COLOR_RESET " iniciando proceso de desinfeccion.\n", id_dron);
         //despierta al hilo del agente de desinfeccion para que atienda al dron entrante
         sem_post(&sem_agente_des); 
         //el dron espera a que el agente valide su id y su bateria
@@ -26,7 +26,7 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         //el dron ya esta limpio, libera el espacio para el siguiente dron
         pthread_mutex_unlock(&sem_sala_desinfeccion);
         //FASE 3: Cosecha
-        printf(COLOR_AMARILLO"\nDron[%d] con autorizacion. recoleccion inicializada...\n",id_dron);
+        printf(COLOR_AMARILLO"\nDron[%d] con autorizacion. Recoleccion inicializada...\n",id_dron);
         sleep(rand()%3+1); //simulacion , busqueda y recoleccion del producto
         //se crea el producto, simular recoleccion
         Producto nuevo_producto;
@@ -59,9 +59,9 @@ void* agente_desinfeccion(void* arg) {
         // El agente espera a que un dron lo llame (Fase 2 del dron)
         sem_wait(&sem_agente_des); 
         
-        printf(COLOR_AZUL "\n[AGENTE]"COLOR_RESET "Recibiendo Dron para desinfección...\n");
+        printf(COLOR_AZUL "\n[AGENTE]"COLOR_RESET " Recibiendo Dron para desinfección...\n");
         sleep(2); // Simula el tiempo que tarda el agente trabajando
-        printf(COLOR_AZUL"[AGENTE]" COLOR_VERDE "Dron" COLOR_RESET "desinfectado exitosamente.\n");
+        printf(COLOR_AZUL"[AGENTE]" COLOR_VERDE " Dron" COLOR_RESET " desinfectado exitosamente.\n");
         
         // Avisa al dron que ya terminó su proceso
         sem_post(&sem_fin_des); 
