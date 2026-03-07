@@ -40,7 +40,7 @@ $(TARGET): $(OBJECTS)
 
 # Borra archivos .o
 clean:
-	rm -f *.o core
+	rm -f *.o $(TARGET) core
 
 # Borra archivos .o y el ejecutable
 cleanall: clean
