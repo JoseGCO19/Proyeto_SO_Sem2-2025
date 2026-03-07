@@ -16,28 +16,28 @@
 #define CAP_ZONA_DESCARGA 2
 
 typedef struct {
-    int tipo_producto;
-    struct timespec tiempo_inicio;
+    int tipo_producto;              //0: Tipo Estandar; 1:Tipo Refrigerado; 2:Tipo Ultra-Procesado
+    struct timespec tiempo_inicio;  //Lleva el tiempo que el producto desde que entro en el programa
 
 } Producto;
 
 // Declaración de variables globales (EXPORT)
-extern sem_t sem_cap_recoleccion;
-extern pthread_mutex_t sem_sala_desinfeccion;
-extern sem_t sem_agente_des;
-extern sem_t sem_fin_des;
-extern sem_t sem_espacios_vacios;
-extern sem_t sem_elementos_disp;
-extern pthread_mutex_t mutex_buffer;
-extern Producto buffer_descarga[CAP_ZONA_DESCARGA];
-extern int indice_producto;
-extern pthread_t drones[N_DRONES_PR];
-extern int ids_drones[N_DRONES_PR];
+extern sem_t sem_cap_recoleccion;                   //Limita la entrada al centro
+extern pthread_mutex_t sem_sala_desinfeccion;       //Mutex para la entrada a la sala de desinfeccion
+extern sem_t sem_agente_des;                        //Despierta al agente de desinfeccion
+extern sem_t sem_fin_des;                           //Semaforo donde el Dron recolector espera hasta ser desinfectado
+extern sem_t sem_espacios_vacios;                   //Limita la entrada a la zona de descarga
+extern sem_t sem_elementos_disp;                    //Llama al proceso del brazo. Indica que dejo elementos en la zona de descarga
+extern pthread_mutex_t mutex_buffer;                //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
+extern Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer donde se almacenaran los productos
+extern int indice_producto;                         //lleva el conteo de cuantos productos hay
+extern pthread_t drones[N_DRONES_PR];               //Hilos de los drones
+extern int ids_drones[N_DRONES_PR];                 //ID's de los Drones de Recoleccion
 
 //contadores de resultados
-extern int usos_plataforma;
-extern int producto_estandar;
-extern int producto_refrigerado;
-extern int producto_ultra_procesado;
+extern int usos_plataforma;                         //Variable que cuenta los usos que tuvo la plataforma magnetica a lo largo del programa
+extern int producto_estandar;                       //Variable que lleva la cuenta de cuantos productos de tipo Estandar se proceso
+extern int producto_refrigerado;                    //Variable que lleva la cuenta de cuantos productos de tipo Refrigerado se proceso
+extern int producto_ultra_procesado;                //Variable que lleva la cuenta de cuantos productos de tipo Ultra-Procesado se proceso
 
 #endif
