@@ -43,6 +43,7 @@ extern int indice_deposito_estandar;                //Lleva el indice del vector
 extern int indice_deposito_refrigerado;             //Lleva el indice del vector deposito en la seccion de productos Refrigerados
 extern pthread_mutex_t mutex_standar; 
 extern pthread_mutex_t mutex_refri; 
+extern char tipo_producto_str[3][20];               //Vector de strings para imprimir el tipo de producto en texto
 
 extern pthread_mutex_t mutex_buffer;                //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
 extern Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer donde se almacenaran los productos
@@ -55,7 +56,6 @@ extern int ids_drones_carga[M_DONES_CARGA];
 extern pthread_t brazo[BRAZOS];
 extern int ids_brazo[BRAZOS];
 extern pthread_t operador_almacen;
-extern int ids_operador_almacen;
 
 
 
@@ -74,7 +74,7 @@ extern int bloqueos_evitados;
 extern pthread_mutex_t mutex_buzon;
 extern int buzon_id_brazo;
 extern sem_t sem_iniciar_viaje_dron; 
-extern sem_t sem_fin_viaje_brazo[3];
+extern sem_t sem_fin_viaje_brazo[BRAZOS];
 extern sem_t sem_plataforma_levitacion;
 extern pthread_mutex_t mutex_metricas_levitacion;
 extern double tiempo_total_acum;
@@ -82,6 +82,7 @@ extern int productos_procesados;
 
 
 //Semaforos de depositos
+extern sem_t deposito_vaciado[TOTAL_DEPOSITOS];
 extern sem_t deposito_libre[TOTAL_DEPOSITOS];
 extern pthread_mutex_t mutex_almacen;
 extern sem_t sem_llamar_operario;
