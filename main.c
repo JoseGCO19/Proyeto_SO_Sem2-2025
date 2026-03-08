@@ -30,7 +30,7 @@ pthread_mutex_t mutex_buffer;               //iniciarlizar en 1
 pthread_mutex_t mutex_buffer_descarga; //este sera para cuando un brazo, intente sacar un producto del buffer(almacen)
 sem_t sem_drones_carga; //inicializar en 1
 pthread_mutex_t mutex_metricas; //mutex para el acceso a la variable de control de bloqueos evitados
-extern int bloqueos_evitados=0; //para contabilizar los bloqueos evitados
+ int bloqueos_evitados=0; //para contabilizar los bloqueos evitados
 pthread_mutex_t mutex_buzon; 
 int buzon_id_brazo;
 sem_t sem_iniciar_viaje_dron; //inicializado en 0 (despierta a los drones de carga)
@@ -39,31 +39,12 @@ sem_t sem_plataforma_levitacion; //inicializada en 1
 pthread_mutex_t mutex_metricas_levitacion;          //para acceder a la variables uso de plataforma de levitacion 
 int usos_plataforma=0;
 int productos_procesados=0;                         //productos totales procesados
-const char tipo_producto_str[3][20] = {"Estándar", "Refrigerado", "Ultradelicado"}; 
-                                                    //para imprimir el tipo de producto en texto
-int frecuencias_pr[4][12] = {
-    {0,0,0,0,1,1,1,1,2,2,2,2}, // Frecuencias normales
-    {0,0,0,0,0,0,1,1,1,2,2,2},   // Frecuencias favorables para productos estandar
-    {1,1,1,1,1,1,0,0,0,2,2,2},    // Frecuencias favorables para productos refrigerados
-    {2,2,2,2,2,2,0,0,0,1,1,1}      // Frecuencias favorables para productos ultradelicados
-};
+
 int selector_frecuencia = 0; // Índice para seleccionar la frecuencia de generación de productos 
 
 
 
-//Cosas Añadidas por Contin
-int ids_brazos[BRAZOS];             //Para almacenar los id de todos los brazos
-pthread_mutex_t mutex_dronCarga;    //semaforo que controla que los drones de carga se asignen a un sólo brazo
-sem_t sem_llamar_operario;          //Semaforo que llama al operario para vaciar los depositos
-pthread_mutex_t mutex_almacen;      //Semaforo que controla el acceso al almacen
-int deposito[TOTAL_DEPOSITOS];      //Vector de los depositos
-sem_t deposito_libre[TOTAL_DEPOSITOS]; 
-sem_t deposito_vaciado[TOTAL_DEPOSITOS];
-int ids_drones_carga[M_DONES_CARGA];       //Vector de los ID's de los drones de carga
-pthread_t drones_carga[M_DONES_CARGA];       //definicion de un array de 4 drones de carga (hilos)
-pthread_t operador_almacen;                  //definicion de el hilo del operador del almacen (hilos)
-pthread_t brazo[BRAZOS];                     //definicion de un array de los 3 brazos mecanicos (hilos)
-int ids_brazo[BRAZOS];                      //Array del Id de cada brazo
+
 
 //VARIABLES PARA EL DEPOSITO
 int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
@@ -89,12 +70,12 @@ int ids_drones[N_DRONES_PR];                // para almacenar los id de todos lo
 
 
 //VARIABLES PARA EL DEPOSITO
-extern int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
-extern int indice_deposito_estandar=0;                //Lleva el indice del vector deposito en la seccion de productos Estandar
-extern int indice_deposito_refrigerado=0;             //Lleva el indice del vector deposito en la seccion de productos Refrigerados
-extern pthread_mutex_t mutex_standar; 
-extern pthread_mutex_t mutex_refri; 
-extern char tipo_producto_str[3][20];               //Vector de strings para imprimir el tipo de producto en texto
+ int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
+ int indice_deposito_estandar=0;                //Lleva el indice del vector deposito en la seccion de productos Estandar
+ int indice_deposito_refrigerado=0;             //Lleva el indice del vector deposito en la seccion de productos Refrigerados
+ pthread_mutex_t mutex_standar; 
+ pthread_mutex_t mutex_refri; 
+ char tipo_producto_str[3][20];               //Vector de strings para imprimir el tipo de producto en texto
 
 //Hilos e ID's
 pthread_t drones[N_DRONES_PR];               //Hilos de los drones
@@ -112,20 +93,41 @@ int producto_refrigerado=0;                    //Variable que lleva la cuenta de
 int producto_ultra_procesado=0;                //Variable que lleva la cuenta de cuantos productos de tipo Ultra-Procesado se proceso
 
 //VARIABLES NECESARIAS PARA EL PROCESO BRAZO_RECOLECTOR
-extern pthread_mutex_t mutex_buffer_descarga;
-extern sem_t sem_drones_carga; // inicializar en 4
-extern pthread_mutex_t mutex_metricas; 
-extern int bloqueos_evitados=0;
-extern pthread_mutex_t mutex_buzon;
-extern int buzon_id_brazo;
-extern sem_t sem_iniciar_viaje_dron;  //inicializar en 0
-extern sem_t sem_fin_viaje_brazo[BRAZOS];
-extern sem_t sem_plataforma_levitacion;//inicializar en 1
-extern pthread_mutex_t mutex_metricas_levitacion;
-extern double tiempo_total_acum=0;
-extern int productos_procesados=0;
+ pthread_mutex_t mutex_buffer_descarga;
+ sem_t sem_drones_carga; // inicializar en 4
+ pthread_mutex_t mutex_metricas; 
+ int bloqueos_evitados=0;
+ pthread_mutex_t mutex_buzon;
+ int buzon_id_brazo;
+ sem_t sem_iniciar_viaje_dron;  //inicializar en 0
+ sem_t sem_fin_viaje_brazo[BRAZOS];
+ sem_t sem_plataforma_levitacion;//inicializar en 1
+ pthread_mutex_t mutex_metricas_levitacion;
+ double tiempo_total_acum=0;
+ int productos_procesados=0;
 
+ //Cosas Añadidas por Contin
+int ids_brazos[BRAZOS];             //Para almacenar los id de todos los brazos
+pthread_mutex_t mutex_dronCarga;    //semaforo que controla que los drones de carga se asignen a un sólo brazo
+sem_t sem_llamar_operario;          //Semaforo que llama al operario para vaciar los depositos
+pthread_mutex_t mutex_almacen;      //Semaforo que controla el acceso al almacen
+int deposito[TOTAL_DEPOSITOS];      //Vector de los depositos
+sem_t deposito_libre[TOTAL_DEPOSITOS]; 
+sem_t deposito_vaciado[TOTAL_DEPOSITOS];
+int ids_drones_carga[M_DONES_CARGA];       //Vector de los ID's de los drones de carga
+pthread_t drones_carga[M_DONES_CARGA];       //definicion de un array de 4 drones de carga (hilos)
+pthread_t operador_almacen;                  //definicion de el hilo del operador del almacen (hilos)
+pthread_t brazo[BRAZOS];                     //definicion de un array de los 3 brazos mecanicos (hilos)
+int ids_brazo[BRAZOS];                      //Array del Id de cada brazo
 
+const char tipo_producto_str[3][20] = {"Estándar", "Refrigerado", "Ultradelicado"}; 
+                                                    //para imprimir el tipo de producto en texto
+int frecuencias_pr[4][12] = {
+    {0,0,0,0,1,1,1,1,2,2,2,2}, // Frecuencias normales
+    {0,0,0,0,0,0,1,1,1,2,2,2},   // Frecuencias favorables para productos estandar
+    {1,1,1,1,1,1,0,0,0,2,2,2},    // Frecuencias favorables para productos refrigerados
+    {2,2,2,2,2,2,0,0,0,1,1,1}      // Frecuencias favorables para productos ultradelicados
+};
 
 int main(int argc, char const *argv[]){
     
