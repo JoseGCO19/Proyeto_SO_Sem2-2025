@@ -7,16 +7,19 @@
 #define COLOR_AMARILLO "\x1b[33m"
 #define COLOR_AZUL     "\x1b[34m"
 #define COLOR_RESET    "\x1b[0m"
+#define COLOR_NARANJA  "\033[38;5;214m"
+#define COLOR_MORADO   "\033[38;5;129m" 
 
 #include <semaphore.h>
 #include <pthread.h>
 #include <time.h>
 #include <unistd.h>
 #include <stdio.h>
+#include <stdlib.h>
 
 #define N_DRONES_PR 10
 #define CAP_ZONA_DESCARGA 10
-#define TOTAL_DEPOSITOS 7
+#define TOTAL_DEPOSITOS 8
 #define M_DONES_CARGA 4
 #define BRAZOS 3
 
