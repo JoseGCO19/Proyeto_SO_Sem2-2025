@@ -13,9 +13,6 @@ void* dron_carga(void *arg);
 void* operario_almacen(void *arg);
 void* brazo_clasificado( void *arg);
 void inicializar_hilos();
-<<<<<<< HEAD
-
-=======
 void inicializar_sem();
 /*
 //VARIABLES PARA EL PROCESO DRONES_RECOLECTORES
@@ -67,7 +64,7 @@ pthread_mutex_t mutex_refri;
 sem_t mutex_deposito;
 sem_t sem_respuesta_operador;
 */
->>>>>>> jesus
+
 //VARIABLE PARA DRONES_RECOLECTORES
 sem_t sem_cap_recoleccion;  //25                 //Limita la entrada al centro 
 pthread_mutex_t sem_sala_desinfeccion;       //Mutex para la entrada a la sala de desinfeccion
