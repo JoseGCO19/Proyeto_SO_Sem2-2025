@@ -12,19 +12,16 @@ void* dron_recolector(void* arg);
 void* dron_carga(void *arg);
 void* operario_almacen(void *arg);
 void* brazo_clasificado( void *arg);
+void inicializar_hilos();
 
-/**/
-//estructura para el buffer de descarga , asumiendo una capacidad para 10 productos
+/*
+//VARIABLES PARA EL PROCESO DRONES_RECOLECTORES
 Producto buffer_descarga[CAP_ZONA_DESCARGA]; //buffer 
 int indice_producto = 0;                    //para desplazarse a traves del buffer 
-pthread_t drones[N_DRONES_PR];              //definicion de un array de 25 drones (hilos)
-
-int ids_drones[N_DRONES_PR];                // para almacenar los id de todos los drones
-//definicion de los semaforos de interaccion entre drop_recolector y agente_desifeccion
 sem_t sem_cap_recoleccion;                  //semaforo contador de dron recolector (25 disponibles)
 pthread_mutex_t sem_sala_desinfeccion;      //semaforo para controlar la espera a la sala de desinfeccion , inicializado en 1
 sem_t sem_agente_des;                       //semaforo para el agente de desifeccion inicializado en 0, dado que hay un solo agente
-                                            //el agente de desinfeccion debe esperar a que un dron lo llame
+                                           //el agente de desinfeccion debe esperar a que un dron lo llame
 sem_t sem_fin_des;                          //semaforo para validar, que el agente ya proceso el id y bateria del semaforo, inicializado en 0
 //semaforos para la zona de carga
 sem_t sem_espacios_vacios;                  //semafor para el buffer , inicializado en CAP_ZONA_DESCARGA
@@ -66,6 +63,58 @@ pthread_mutex_t mutex_standar; //para el item en el deposito
 pthread_mutex_t mutex_refri; 
 sem_t mutex_deposito;
 sem_t sem_respuesta_operador;
+*/
+//VARIABLE PARA DRONES_RECOLECTORES
+sem_t sem_cap_recoleccion;  //25                 //Limita la entrada al centro 
+pthread_mutex_t sem_sala_desinfeccion;       //Mutex para la entrada a la sala de desinfeccion
+sem_t sem_agente_des;   //1                     //Despierta al agente de desinfeccion
+sem_t sem_fin_des;    //0                       //Semaforo donde el Dron recolector espera hasta ser desinfectado
+sem_t sem_espacios_vacios; //CAP_ZONA_DESCARGA Limita la entrada a la zona de descarga
+sem_t sem_elementos_disp; //0                  //Llama al proceso del brazo. Indica que dejo elementos en la zona de descarga
+pthread_mutex_t mutex_buffer;                //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
+Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer donde se almacenaran los productos
+int indice_producto=0;                         //lleva el conteo de cuantos productos hay
+pthread_t drones[N_DRONES_PR];              //definicion de un array de 25 drones (hilos)
+int ids_drones[N_DRONES_PR];                // para almacenar los id de todos los drones
+
+
+//VARIABLES PARA EL DEPOSITO
+extern int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
+extern int indice_deposito_estandar=0;                //Lleva el indice del vector deposito en la seccion de productos Estandar
+extern int indice_deposito_refrigerado=0;             //Lleva el indice del vector deposito en la seccion de productos Refrigerados
+extern pthread_mutex_t mutex_standar; 
+extern pthread_mutex_t mutex_refri; 
+extern char tipo_producto_str[3][20];               //Vector de strings para imprimir el tipo de producto en texto
+
+//Hilos e ID's
+pthread_t drones[N_DRONES_PR];               //Hilos de los drones
+int ids_drones[N_DRONES_PR];                 //ID's de los Drones de Recoleccion
+pthread_t drones_carga[M_DONES_CARGA];
+int ids_drones_carga[M_DONES_CARGA];
+pthread_t brazo[BRAZOS];
+int ids_brazo[BRAZOS];
+pthread_t operador_almacen;
+
+//contadores de resultados
+int usos_plataforma=0;                         //Variable que cuenta los usos que tuvo la plataforma magnetica a lo largo del programa
+int producto_estandar=0;                       //Variable que lleva la cuenta de cuantos productos de tipo Estandar se proceso
+int producto_refrigerado=0;                    //Variable que lleva la cuenta de cuantos productos de tipo Refrigerado se proceso
+int producto_ultra_procesado=0;                //Variable que lleva la cuenta de cuantos productos de tipo Ultra-Procesado se proceso
+
+//VARIABLES NECESARIAS PARA EL PROCESO BRAZO_RECOLECTOR
+extern pthread_mutex_t mutex_buffer_descarga;
+extern sem_t sem_drones_carga; // inicializar en 4
+extern pthread_mutex_t mutex_metricas; 
+extern int bloqueos_evitados=0;
+extern pthread_mutex_t mutex_buzon;
+extern int buzon_id_brazo;
+extern sem_t sem_iniciar_viaje_dron;  //inicializar en 0
+extern sem_t sem_fin_viaje_brazo[BRAZOS];
+extern sem_t sem_plataforma_levitacion;//inicializar en 1
+extern pthread_mutex_t mutex_metricas_levitacion;
+extern double tiempo_total_acum=0;
+extern int productos_procesados=0;
+
 
 
 int main(int argc, char const *argv[]){
@@ -82,6 +131,8 @@ int main(int argc, char const *argv[]){
     pthread_mutex_init(&mutex_buffer,NULL); //para el acceso al buffer , 1 por hilo
     pthread_mutex_init(&mutex_dronCarga,NULL); //para el acceso al viaje del dron, 1 por hilo
     pthread_mutex_init(&mutex_almacen,NULL); //Para el acceso al almacen, 1 por hilo
+
+
     //Inicialización del semaforo de sem_fin_viaje_brazo
     for (int i = 0; i < BRAZOS; i++){
         sem_init(&sem_fin_viaje_brazo[i],0,0);
@@ -119,14 +170,16 @@ void inicializar_hilos(){
         ids_drones[i]=i+1; //asignacion de los ids unicos 
         pthread_create(&drones[i], NULL, dron_recolector, &ids_drones[i]);
     }
+    for(int i=0 ; i<BRAZOS ; i++){
+        ids_brazo[i]=i+1;
+        pthread_create(&brazo[i],NULL, brazo_clasificado, &ids_brazo[i]);
+    }
+
     /*//creacion de los hilos para los drones de Carga
     for (int i = 0; i < M_DONES_CARGA; i++) {
         ids_drones_carga[i] = i + 1;
         pthread_create(&drones_carga[i], NULL, dron_carga, &ids_drones_carga[i]);
     }
-    //creacion de los hilos para los brazos clasificadores
-    for (int i = 0; i < BRAZOS; i++) {
-        ids_brazos[i] = i + 1;
-        pthread_create(&brazo[i], NULL, brazo_clasificado, ids_brazos[i]);
-    }*/
+    */
+    
 }
