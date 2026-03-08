@@ -48,9 +48,6 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
             break;
         }
         pthread_mutex_unlock(&mutex_contador_resultado);
-
-        nuevo_producto.tipo_producto = rand()%3;
-        //nuevo_producto.tipo_producto = frecuencias_pr[selector_frecuencia%4][rand()%12]; //selecciona un tipo de producto basado en la frecuencia seleccionada
         //CLOCK_MONOTONIC asegura que el tiempo sea siempre creciente y preciso
         clock_gettime(CLOCK_MONOTONIC, &nuevo_producto.tiempo_inicio);
         //FASE 4: entrega en la zona de carga
