@@ -31,7 +31,8 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         sleep(rand()%3+1); //simulacion , busqueda y recoleccion del producto
         //se crea el producto, simular recoleccion
         Producto nuevo_producto;
-        nuevo_producto.tipo_producto = frecuencias_pr[selector_frecuencia%4][rand()%12]; //selecciona un tipo de producto basado en la frecuencia seleccionada
+        nuevo_producto.tipo_producto = rand() %3;
+        //nuevo_producto.tipo_producto = frecuencias_pr[selector_frecuencia%4][rand()%12]; //selecciona un tipo de producto basado en la frecuencia seleccionada
         pthread_mutex_lock(&mutex_contador_resultado);
         switch (nuevo_producto.tipo_producto)
         {
