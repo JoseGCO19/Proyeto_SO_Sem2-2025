@@ -1,4 +1,4 @@
-#include "main.c"
+#include "main.h"
 
 void* dron_carga(void *arg){ 
     int id_dron = *((int*)arg);
@@ -21,14 +21,16 @@ void* operario_almacen(void *arg){
         //El operario espera a ser llamado para retirar los depositos llenos
         sem_wait(&sem_llamar_operario);
         pthread_mutex_lock(&mutex_almacen); //Entra solo uno a la vez al almacen
-        for (int i=0; i<8; i++){ //pasamos por todos los depositos
+        for (int i = 0; i < TOTAL_DEPOSITOS; i++){ //pasamos por todos los depositos
             if(deposito[i] == 3){
+                printf(">>> OPERARIO: Depósito [%d] lleno. Retirando producto y colocando cajas nuevas...\n", i);
                 sleep(rand()%3+1); //Simulación del tiempo de descarga y reponer cajas
                 deposito[i] = 0; //Se vacia el deposito
                 sem_post(&deposito_libre[i]);
                 sem_post(&deposito_libre[i]);
                 sem_post(&deposito_libre[i]);
-                sem_post(&sem_fin_viaje_brazo[i]);
+                printf(">>> OPERARIO: Depósito [%d] vaciado y listo.\n", i);
+                sem_post(&deposito_vaciado[i]);
             }
         }
         pthread_mutex_unlock(&mutex_almacen); //da espacio al siguiente
