@@ -40,6 +40,7 @@ extern sem_t sem_plataforma;                        //Semaforo que limita el uso
 extern int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
 extern int indice_deposito_estandar;                //Lleva el indice del vector deposito en la seccion de productos Estandar
 extern int indice_deposito_refrigerado;             //Lleva el indice del vector deposito en la seccion de productos Refrigerados
+extern char tipo_producto_str[3][20];               //Vector de strings para imprimir el tipo de producto en texto
 
 extern pthread_mutex_t mutex_buffer;                //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
 extern Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer donde se almacenaran los productos

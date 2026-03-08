@@ -19,7 +19,7 @@ void* dron_recolector(void* arg);
 Producto buffer_descarga[CAP_ZONA_DESCARGA]; //buffer 
 int indice_producto = 0;                    //para desplazarse a traves del buffer 
 pthread_t drones[N_DRONES_PR];              //definicion de un array de 25 drones (hilos)
-//falta definir si es global o local al main ??
+
 int ids_drones[N_DRONES_PR];                // para almacenar los id de todos los drones
 //definicion de los semaforos de interaccion entre drop_recolector y agente_desifeccion
 sem_t sem_cap_recoleccion;                  //semaforo contador de dron recolector (25 disponibles)
