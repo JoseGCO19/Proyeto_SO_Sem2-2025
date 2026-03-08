@@ -9,6 +9,9 @@
 //Prototipos
 void* agente_desinfeccion(void* arg);
 void* dron_recolector(void* arg);
+void* dron_carga(void *arg);
+void* operario_almacen(void *arg);
+void* brazo_clasificado( void *arg);
 
 /**/
 //estructura para el buffer de descarga , asumiendo una capacidad para 10 productos
@@ -48,7 +51,12 @@ sem_t sem_llamar_operario;          //Semaforo que llama al operario para vaciar
 pthread_mutex_t mutex_almacen;      //Semaforo que controla el acceso al almacen
 int deposito[TOTAL_DEPOSITOS];      //Vector de los depositos
 sem_t deposito_libre[TOTAL_DEPOSITOS]; 
-sem_t deposito_vaciado[TOTAL_DEPOSITOS]; 
+sem_t deposito_vaciado[TOTAL_DEPOSITOS];
+int ids_drones_carga[M_DONES_CARGA];       //Vector de los ID's de los drones de carga
+pthread_t drones_carga[M_DONES_CARGA];       //definicion de un array de 4 drones de carga (hilos)
+pthread_t operador_almacen;                  //definicion de el hilo del operador del almacen (hilos)
+pthread_t brazo[BRAZOS];                     //definicion de un array de los 3 brazos mecanicos (hilos)
+int ids_brazo[BRAZOS];                      //Array del Id de cada brazo
 
 //VARIABLES PARA EL DEPOSITO
 int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
@@ -72,28 +80,35 @@ int main(int argc, char const *argv[]){
     pthread_mutex_init(&mutex_buffer,NULL); //para el acceso al buffer , 1 por hilo
     pthread_mutex_init(&mutex_dronCarga,NULL); //para el acceso al viaje del dron, 1 por hilo
     pthread_mutex_init(&mutex_almacen,NULL); //Para el acceso al almacen, 1 por hilo
-
-    pthread_t hilo_agente; ///hilo para el agente
-    pthread_create(&hilo_agente, NULL, agente_desinfeccion, NULL); 
-    //creacion de los hilos para los drones
-    for (int i = 0; i < N_DRONES_PR; i++){
-        ids_drones[i]=i+1; //asignacion de los ids unicos 
-        pthread_create(&drones[i], NULL, dron_recolector,&ids_drones[i]);
-    }
     //Inicialización del semaforo de sem_fin_viaje_brazo
     for (int i = 0; i < BRAZOS; i++){
-        sem_init(&sem_fin_viaje_brazo,0,0);
+        sem_init(&sem_fin_viaje_brazo[i],0,0);
     }
     //Inicialización de los semaforos de depositoLibre y deposito_vaciado
     for (int i = 0; i < TOTAL_DEPOSITOS; i++){
         sem_init(&deposito_libre[i],0,3);
         sem_init(&deposito_vaciado[i],0,0);
     }
-    /*
+    //------ Creacion de los Hilos ------
+    pthread_t hilo_agente; //hilo para el agente
+    pthread_create(&hilo_agente, NULL, agente_desinfeccion, NULL); 
+    pthread_create(&operador_almacen, NULL, operario_almacen, NULL);
+    //creacion de los hilos para los drones
     for (int i = 0; i < N_DRONES_PR; i++){
-        pthread_join(drones[i],NULL);
+        ids_drones[i]=i+1; //asignacion de los ids unicos 
+        pthread_create(&drones[i], NULL, dron_recolector, &ids_drones[i]);
     }
-    
+    //creacion de los hilos para los drones de Carga
+    for (int i = 0; i < M_DONES_CARGA; i++) {
+        ids_drones_carga[i] = i + 1;
+        pthread_create(&drones_carga[i], NULL, dron_carga, &ids_drones_carga[i]);
+    }
+    //creacion de los hilos para los brazos clasificadores
+    for (int i = 0; i < BRAZOS; i++) {
+        ids_brazos[i] = i + 1;
+        pthread_create(&brazo[i], NULL, brazo_clasificado, ids_brazos[i]);
+    }
+    /*
     //destruccion de los semaforos
     sem_destroy(&sem_cap_recoleccion);
     pthread_mutex_destroy(&sem_sala_desinfeccion);
