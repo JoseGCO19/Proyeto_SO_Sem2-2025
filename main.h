@@ -37,6 +37,7 @@ extern sem_t sem_espacios_vacios;                   //Limita la entrada a la zon
 extern sem_t sem_elementos_disp;                    //Llama al proceso del brazo. Indica que dejo elementos en la zona de descarga
 extern pthread_mutex_t mutex_buffer;                //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
 extern Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer donde se almacenaran los productos
+extern pthread_mutex_t mutex_contador_resultado;
 extern int indice_producto;                         //lleva el conteo de cuantos productos hay
 
 
