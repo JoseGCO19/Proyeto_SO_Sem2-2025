@@ -45,13 +45,14 @@ void* brazo_clasificado( void *arg){
         pthread_mutex_unlock(&mutex_metricas);
 
         //FASE 4; DEPOSITOS Y OPERADORES DE ALMACEN
-        pthread_mutex_lock(&mutex_deposito);
         target_deposito= get_target(nuevo_pr_saliente);
+        sem_wait(&deposito_libre[target_deposito]);
+        pthread_mutex_lock(&mutex_deposito);
         deposito[target_deposito]=deposito[target_deposito]+1;
         if(deposito[target_deposito] == 3){
             sem_post(&sem_llamar_operario);
             pthread_mutex_unlock(&mutex_deposito);
-            sem_wait(&deposito_libre[target_deposito]);
+            sem_wait(&deposito_vaciado[target_deposito]);
         }else
             pthread_mutex_unlock(&mutex_deposito);
     }
