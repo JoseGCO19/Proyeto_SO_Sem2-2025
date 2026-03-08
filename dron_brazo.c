@@ -46,6 +46,7 @@ void* brazo_clasificado( void *arg){
             sem_wait(&deposito_libre[target_deposito]);
         }else
             sem_post(&mutex_deposito);
+        
     }
     
     return NULL;
@@ -134,4 +135,41 @@ void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){
             sleep(1);
         }
 
+}
+
+void* dron_carga(void *arg){ 
+    int id_dron = *((int*)arg);
+    while(1){
+        //El dron espera a ser llamado por el brazo clasificador
+        sem_wait(&sem_iniciar_viaje_dron);
+        pthread_mutex_lock(&mutex_dronCarga); //solo permitira el acceso a que un dron de carga sea asignado a un brazo
+        int buzon_brazo = buzon_id_brazo; //Se le asigna el ID del brazo actual a el dron actual
+        pthread_mutex_unlock(&mutex_dronCarga);
+        printf(">>> DRON DE CARGA [%d]: Iniciando traslado para el Brazo [%d]...\n", id_dron, buzon_brazo);
+        sleep(rand()%3+1); //Simulación del tiempo de viaje
+        printf(">>> DRON DE CARGA [%d]: Traslado finalizado.\n", id_dron);
+        sem_post(&sem_fin_viaje_brazo[buzon_brazo - 1]); //Manda  señal de que el dron de carga terminó su viaje
+    }
+    return NULL;
+}
+
+void* operario_almacen(void *arg){
+    while(1){
+        //El operario espera a ser llamado para retirar los depositos llenos
+        sem_wait(&sem_llamar_operario);
+        pthread_mutex_lock(&mutex_almacen); //Entra solo uno a la vez al almacen
+        for (int i = 0; i < TOTAL_DEPOSITOS; i++){ //pasamos por todos los depositos
+            if(deposito[i] == 3){
+                printf(">>> OPERARIO: Depósito [%d] lleno. Retirando producto y colocando cajas nuevas...\n", i);
+                sleep(rand()%3+1); //Simulación del tiempo de descarga y reponer cajas
+                deposito[i] = 0; //Se vacia el deposito
+                sem_post(&deposito_libre[i]);
+                sem_post(&deposito_libre[i]);
+                sem_post(&deposito_libre[i]);
+                printf(">>> OPERARIO: Depósito [%d] vaciado y listo.\n", i);
+                sem_post(&deposito_vaciado[i]);
+            }
+        }
+        pthread_mutex_unlock(&mutex_almacen); //da espacio al siguiente
+    }
 }

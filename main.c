@@ -13,6 +13,7 @@ void* dron_carga(void *arg);
 void* operario_almacen(void *arg);
 void* brazo_clasificado( void *arg);
 void inicializar_hilos();
+void inicializar_sem();
 
 //VARIABLE PARA DRONES_RECOLECTORES
 sem_t sem_cap_recoleccion;  //25                 //Limita la entrada al centro 
@@ -23,6 +24,7 @@ sem_t sem_espacios_vacios; //CAP_ZONA_DESCARGA Limita la entrada a la zona de de
 sem_t sem_elementos_disp; //0                  //Llama al proceso del brazo. Indica que dejo elementos en la zona de descarga
 pthread_mutex_t mutex_buffer;                //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
 Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer donde se almacenaran los productos
+pthread_mutex_t mutex_contador_resultado;
 int indice_producto=0;                         //lleva el conteo de cuantos productos hay
 
 
@@ -149,10 +151,10 @@ void inicializar_hilos(){
         ids_drones[i]=i+1; //asignacion de los ids unicos 
         pthread_create(&drones[i], NULL, dron_recolector, &ids_drones[i]);
     }
-    for(int i=0 ; i<BRAZOS ; i++){
+    /*for(int i=0 ; i<BRAZOS ; i++){
         ids_brazo[i]=i+1;
         pthread_create(&brazo[i],NULL, brazo_clasificado, &ids_brazo[i]);
-    }
+    }*/
 
     /*//creacion de los hilos para los drones de Carga
     for (int i = 0; i < M_DONES_CARGA; i++) {
