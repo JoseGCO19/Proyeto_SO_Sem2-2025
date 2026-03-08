@@ -23,9 +23,9 @@ void* brazo_clasificado( void *arg){
         sem_wait(&sem_elementos_disp);                      //espera a que el dron recolector le avise que ya hay recursos disponibles en el almacen
         pthread_mutex_lock(&mutex_buffer_descarga);         //para que solo 1 proceso hilo pueda sacar un recurso
         //SECION CRITICA 
-        nuevo_pr_saliente= buffer_descarga[indice_producto]; //ademas se protege el uso de indice_producto y el buffer
+        nuevo_pr_saliente= buffer_descarga[indice_consumidor]; //ademas se protege el uso de indice_consumidor y el buffer
         printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomó un producto %s en la posicion %d del almacen termporal\n", id_brazo, tipo_producto_str[nuevo_pr_saliente.tipo_producto], indice_producto);
-        indice_producto = (indice_producto +1) % CAP_ZONA_DESCARGA; 
+        indice_consumidor = (indice_consumidor +1) % CAP_ZONA_DESCARGA; 
 
         pthread_mutex_unlock(&mutex_buffer_descarga);       //da espacio al siguiente
 

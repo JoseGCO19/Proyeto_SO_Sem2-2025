@@ -22,7 +22,8 @@ sem_t sem_espacios_vacios;                       //CAP_ZONA_DESCARGA Limita la e
 sem_t sem_elementos_disp; //0                    //Llama al proceso del brazo. Indica que dejo elementos en la zona de descarga
 pthread_mutex_t mutex_buffer;                    //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
 Producto buffer_descarga[CAP_ZONA_DESCARGA];     //[Zona de descarga], buffer donde se almacenaran los productos
-int indice_producto=0;    
+int indice_productor=0;    
+int indice_consumido=0;
 pthread_mutex_t mutex_contador_resultado;                     //lleva el conteo de cuantos productos hay
 
 

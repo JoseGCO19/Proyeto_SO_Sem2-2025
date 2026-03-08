@@ -49,7 +49,6 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         }
         pthread_mutex_unlock(&mutex_contador_resultado);
 
-        nuevo_producto.tipo_producto = rand()%3;
         //nuevo_producto.tipo_producto = frecuencias_pr[selector_frecuencia%4][rand()%12]; //selecciona un tipo de producto basado en la frecuencia seleccionada
         //CLOCK_MONOTONIC asegura que el tiempo sea siempre creciente y preciso
         clock_gettime(CLOCK_MONOTONIC, &nuevo_producto.tiempo_inicio);
@@ -58,10 +57,10 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         sem_wait(&sem_espacios_vacios);
         //bloquear el buffer para deposirar de forma segura
         pthread_mutex_lock(&mutex_buffer);
-        buffer_descarga[indice_producto]=nuevo_producto; //colocar el producto en el buffer
+        buffer_descarga[indice_productor]=nuevo_producto; //colocar el producto en el buffer
         printf(COLOR_VERDE "\n Drone[%d]"COLOR_RESET ", deposito producto %d en la posicion [%d] del buffer.\n", id_dron,nuevo_producto.tipo_producto,indice_producto);
         //avanzar al indice de forma circular
-        indice_producto=(indice_producto+1)%CAP_ZONA_DESCARGA;
+        indice_productor=(indice_productor+1)%CAP_ZONA_DESCARGA;
         pthread_mutex_unlock(&mutex_buffer); //dar acceso al siguiente hilo
         //avisa, hay un nuevo producto para clasificar
         sem_post(&sem_elementos_disp); 
