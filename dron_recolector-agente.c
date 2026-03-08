@@ -12,9 +12,9 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
 
     while (1){ //garantiza que el dron nunca se detenga mientras el sistema este activo
         //FASE 1: entrada al recinto , solo 25 drones para la zona de cultivo
-        int id_dron = *((int*)arg); //convertir el puntero generico a una direccion real int 
+        int id_dron = *((int*)arg);                     //convertir el puntero generico a una direccion real int 
         //hace una llamada a wait para entrar al cultivo
-        sem_wait(&sem_cap_recoleccion); //verifica que haya drones disponibles
+        sem_wait(&sem_cap_recoleccion);                 //verifica que haya drones disponibles
         //ahora cada dron recolector debe esperar para pasar a la sala de desifeccion para hacer atendido por el agente de desifeccion
         //FASE 2: los drones deben entrar a la sala de espera para desinfeccion
         pthread_mutex_lock(&sem_sala_desinfeccion); //solo permitira el acceso a un dron de recoleccion al la sala de desinfeccion
@@ -35,6 +35,7 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         nuevo_producto.tipo_producto = rand() %3;
         //nuevo_producto.tipo_producto = frecuencias_pr[selector_frecuencia%4][rand()%12]; //selecciona un tipo de producto basado en la frecuencia seleccionada
         pthread_mutex_lock(&mutex_contador_resultado);
+        //Se cuenta cuantos productos se han recolectado segun su tipo
         switch (nuevo_producto.tipo_producto)
         {
         case 0:

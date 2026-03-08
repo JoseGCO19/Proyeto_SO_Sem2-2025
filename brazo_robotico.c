@@ -19,14 +19,14 @@ void* brazo_clasificado( void *arg){
 
     while (1){
         //FASE 1: extraccion del producto
-        sem_wait(&sem_elementos_disp); //espera a que el dron recolector le avise que ya hay recursos disponibles en el almacen
-        pthread_mutex_lock(&mutex_buffer_descarga); //para que solo 1 proceso hilo pueda sacar un recurso
+        sem_wait(&sem_elementos_disp);                      //espera a que el dron recolector le avise que ya hay recursos disponibles en el almacen
+        pthread_mutex_lock(&mutex_buffer_descarga);         //para que solo 1 proceso hilo pueda sacar un recurso
         //SECION CRITICA 
         nuevo_pr_saliente= buffer_descarga[indice_producto]; //ademas se protege el uso de indice_producto y el buffer
         printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomó un producto %s en la posicion %d del almacen termporal\n", id_brazo, tipo_producto_str[nuevo_pr_saliente.tipo_producto], indice_producto);
         indice_producto = (indice_producto +1) % CAP_ZONA_DESCARGA; 
 
-        pthread_mutex_unlock(&mutex_buffer_descarga); //da espacio al siguiente
+        pthread_mutex_unlock(&mutex_buffer_descarga);       //da espacio al siguiente
         //FASE 2: DESPACHO
         sem_post(&sem_espacios_vacios);
         despacho_dron(nuevo_pr_saliente,id_brazo);
@@ -42,14 +42,15 @@ void* brazo_clasificado( void *arg){
         pthread_mutex_unlock(&mutex_metricas);
 
         //FASE 4; DEPOSITOS Y OPERADORES DE ALMACEN
+        pthread_mutex_lock(&mutex_deposito);
         get_target(nuevo_pr_saliente);
         deposito[target_deposito]=deposito[target_deposito]+1;
         if(deposito[target_deposito] == 3){
             sem_post(&sem_llamar_operario);
-            sem_post(&mutex_deposito);
+            pthread_mutex_unlock(&mutex_deposito);
             sem_wait(&deposito_libre[target_deposito]);
         }else
-            sem_post(&mutex_deposito);
+            pthread_mutex_unlock(&mutex_deposito);
     }
     
     return NULL;

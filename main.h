@@ -56,7 +56,7 @@ extern int usos_plataforma;                         //Variable que cuenta los us
 extern int producto_estandar;                       //Variable que lleva la cuenta de cuantos productos de tipo Estandar se proceso
 extern int producto_refrigerado;                    //Variable que lleva la cuenta de cuantos productos de tipo Refrigerado se proceso
 extern int producto_ultra_procesado;                //Variable que lleva la cuenta de cuantos productos de tipo Ultra-Procesado se proceso
-
+//mutex_deposito
 //VARIABLES NECESARIAS PARA EL PROCESO BRAZO_RECOLECTOR
 extern pthread_mutex_t mutex_buffer_descarga;
 extern sem_t sem_drones_carga; // inicializar en 4
@@ -77,7 +77,7 @@ extern sem_t deposito_libre[TOTAL_DEPOSITOS];
 extern pthread_mutex_t mutex_almacen;
 extern sem_t sem_llamar_operario;
 extern pthread_mutex_t mutex_dronCarga;
-extern sem_t mutex_deposito;
+extern pthread_mutex_t mutex_deposito;
 
 
 

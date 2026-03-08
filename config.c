@@ -30,8 +30,8 @@ pthread_mutex_t mutex_contador_resultado;                     //lleva el conteo 
 int deposito[TOTAL_DEPOSITOS];                 //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
 int indice_deposito_estandar=0;                //Lleva el indice del vector deposito en la seccion de productos Estandar
 int indice_deposito_refrigerado=0;             //Lleva el indice del vector deposito en la seccion de productos Refrigerados
-pthread_mutex_t mutex_standar; 
-pthread_mutex_t mutex_refri; 
+pthread_mutex_t mutex_standar;                 //Permite editar el indice del vector deposito en el rango de los depositos estandar
+pthread_mutex_t mutex_refri;                   //Permite editar el indice del vector deposito en el rango de los depositos Refrigerados
 char tipo_producto_str[3][20];               //Vector de strings para imprimir el tipo de producto en texto
 
 //Hilos e ID's
@@ -54,15 +54,15 @@ int producto_ultra_procesado=0;                //Variable que lleva la cuenta de
 pthread_mutex_t mutex_buffer_descarga;
 sem_t sem_drones_carga; // inicializar en 4
 pthread_mutex_t mutex_metricas; 
-int bloqueos_evitados=0;
-pthread_mutex_t mutex_buzon;
-int buzon_id_brazo;
-sem_t sem_iniciar_viaje_dron;  //inicializar en 0
-sem_t sem_fin_viaje_brazo[BRAZOS];
-sem_t sem_plataforma_levitacion;//inicializar en 1
-pthread_mutex_t mutex_metricas_levitacion;
+int bloqueos_evitados=0;                        //Contador de bloqueos evitados
+pthread_mutex_t mutex_buzon;                    //Mutex para que el brazo guarde su ID y se lo mande a los drones de carga
+int buzon_id_brazo;                             //Variable globar a la cual acceden el Brazo y los Drones de carga, uno evia su ID y el otro lo recibe
+sem_t sem_iniciar_viaje_dron;                   //inicializar en 0
+sem_t sem_fin_viaje_brazo[BRAZOS];              //Semaforo donde espera el brazo hasta que el dron finalize su proceso
+sem_t sem_plataforma_levitacion;                //inicializar en 1//Mutex para exlcluir el uso de la plataforma magnetica
+pthread_mutex_t mutex_metricas_levitacion;      //Mutex que cuida el contador de usos de la Plataforma de Levitacion
 double tiempo_total_acum=0;
-int productos_procesados=0;
+int productos_procesados=0;                     //Contador de los productos totales
 
 //Semaforos de depositos
 sem_t deposito_vaciado[TOTAL_DEPOSITOS]; //inicializado en 3
@@ -70,7 +70,7 @@ sem_t deposito_libre[TOTAL_DEPOSITOS]; //inicializado en 0
 pthread_mutex_t mutex_almacen;
 sem_t sem_llamar_operario;
 pthread_mutex_t mutex_dronCarga;
-sem_t mutex_deposito;
+pthread_mutex_t mutex_deposito;
 
 //INICIALIZACION DE SEMAFOROS
 
@@ -85,7 +85,7 @@ void inicializar_sem(){
     sem_init(&sem_drones_carga,0,4);
     sem_init(&sem_iniciar_viaje_dron,0,0);
     sem_init(&sem_plataforma_levitacion,0,1);
-    sem_init(&mutex_deposito,0,1);
+    pthread_mutex_init(&mutex_deposito,NULL);
     pthread_mutex_init(&mutex_buffer,NULL); //para el acceso al buffer , 1 por hilo
     pthread_mutex_init(&mutex_dronCarga,NULL); //para el acceso al viaje del dron, 1 por hilo
     pthread_mutex_init(&mutex_almacen,NULL); //Para el acceso al almacen, 1 por hilo
