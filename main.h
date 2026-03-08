@@ -15,10 +15,10 @@
 #include <stdio.h>
 
 #define N_DRONES_PR 3
-#define CAP_ZONA_DESCARGA 2
+#define CAP_ZONA_DESCARGA 3
 #define TOTAL_DEPOSITOS 7
-#define M_DONES_CARGA 4
-#define BRAZOS 3    
+#define M_DONES_CARGA 3
+#define BRAZOS 1
 
 typedef struct {
     int tipo_producto;              //0: Tipo Estandar; 1:Tipo Refrigerado; 2:Tipo Ultra-delicado
