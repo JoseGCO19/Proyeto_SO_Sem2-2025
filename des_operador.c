@@ -27,6 +27,7 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         //el dron ya esta limpio, libera el espacio para el siguiente dron
         pthread_mutex_unlock(&sem_sala_desinfeccion);
         //FASE 3: Cosecha
+        
         printf(COLOR_AMARILLO"\nDron[%d] con autorizacion. Recoleccion inicializada...\n",id_dron);
         sleep(rand()%3+1); //simulacion , busqueda y recoleccion del producto
         //se crea el producto, simular recoleccion

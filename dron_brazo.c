@@ -26,10 +26,9 @@ void* brazo_clasificado( void *arg){
         printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomó un producto %s en la posicion %d del almacen termporal\n", id_brazo, tipo_producto_str[nuevo_pr_saliente.tipo_producto], indice_producto);
         indice_producto = (indice_producto +1) % CAP_ZONA_DESCARGA; 
 
-        sem_post(&sem_espacios_vacios);
         pthread_mutex_unlock(&mutex_buffer_descarga); //da espacio al siguiente
         //FASE 2: DESPACHO
-
+        sem_post(&sem_espacios_vacios);
         despacho_dron(nuevo_pr_saliente,id_brazo);
         struct timespec tiempo_fin;
         clock_gettime(CLOCK_MONOTONIC,&tiempo_fin);
