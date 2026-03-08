@@ -45,7 +45,7 @@ void* brazo_clasificado( void *arg){
             sem_post(&mutex_deposito);
             sem_wait(&deposito_libre[target_deposito]);
         }else
-            sem_post(&mutex_deposito)
+            sem_post(&mutex_deposito);
     }
     
     return NULL;
