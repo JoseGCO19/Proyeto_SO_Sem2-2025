@@ -8,9 +8,9 @@ void* dron_carga(void *arg){
         pthread_mutex_lock(&mutex_dronCarga); //solo permitira el acceso a que un dron de carga sea asignado a un brazo
         int buzon_brazo = buzon_id_brazo; //Se le asigna el ID del brazo actual a el dron actual
         pthread_mutex_unlock(&mutex_dronCarga);
-        printf(">>> DRON DE CARGA [%d]: Iniciando traslado para el Brazo [%d]...\n", id_dron, buzon_brazo);
+        printf(COLOR_VERDE">>> DRON DE CARGA [%d]:" COLOR_RESET "Iniciando traslado para el Brazo [%d]...\n", id_dron, buzon_brazo);
         sleep(rand()%3+1); //Simulación del tiempo de viaje
-        printf(">>> DRON DE CARGA [%d]: Traslado finalizado.\n", id_dron);
+        printf(COLOR_VERDE ">>> DRON DE CARGA [%d]:" COLOR_RESET "Traslado finalizado.\n", id_dron);
         sem_post(&sem_fin_viaje_brazo[buzon_brazo - 1]); //Manda  señal de que el dron de carga terminó su viaje
     }
     return NULL;
