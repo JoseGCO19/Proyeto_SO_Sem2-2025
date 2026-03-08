@@ -56,6 +56,8 @@ int indice_deposito_estandar=0;                //Lleva el indice del vector depo
 int indice_deposito_refrigerado=0;  
 pthread_mutex_t mutex_standar; //para el item en el deposito
 pthread_mutex_t mutex_refri; 
+sem_t mutex_deposito;
+sem_t sem_respuesta_operador;
 
 
 int main(int argc, char const *argv[]){

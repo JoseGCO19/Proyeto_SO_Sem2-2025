@@ -21,8 +21,7 @@ void* brazo_clasificado( void *arg){
         pthread_mutex_lock(&mutex_buffer_descarga); //para que solo 1 proceso hilo pueda sacar un recurso
         //SECION CRITICA 
         nuevo_pr_saliente= buffer_descarga[indice_producto]; //ademas se protege el uso de indice_producto y el buffer
-        printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomó un producto %s en la posicion %d del almacen termporal", id_brazo, 
-            tipo_producto_str[nuevo_pr_saliente.tipo_producto], indice_producto);
+        printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomó un producto %s en la posicion %d del almacen termporal", id_brazo, tipo_producto_str[nuevo_pr_saliente.tipo_producto], indice_producto);
         indice_producto = (indice_producto +1) % CAP_ZONA_DESCARGA; 
         pthread_mutex_unlock(&mutex_buffer_descarga); //da espacio al siguiente
         //FASE 2: DESPACHO
@@ -42,14 +41,13 @@ void* brazo_clasificado( void *arg){
         get_target(nuevo_pr_saliente);
         deposito[target_deposito]=deposito[target_deposito]+1;
         if(deposito[target_deposito] == 3){
-            
-        }
-        
-
-
+            sem_post(&sem_llamar_operario);
+            sem_post(&mutex_deposito);
+            sem_wait(&deposito_libre[target_deposito]);
+        }else
+            sem_post(&mutex_deposito)
     }
     
-
     return NULL;
 }
 void get_target(Producto item){
