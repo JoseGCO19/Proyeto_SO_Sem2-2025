@@ -90,24 +90,7 @@ int main(int argc, char const *argv[]){
         sem_init(&deposito_vaciado[i],0,0);
     }
     //------ Creacion de los Hilos ------
-    pthread_t hilo_agente; //hilo para el agente
-    pthread_create(&hilo_agente, NULL, agente_desinfeccion, NULL); 
-    pthread_create(&operador_almacen, NULL, operario_almacen, NULL);
-    //creacion de los hilos para los drones
-    for (int i = 0; i < N_DRONES_PR; i++){
-        ids_drones[i]=i+1; //asignacion de los ids unicos 
-        pthread_create(&drones[i], NULL, dron_recolector, &ids_drones[i]);
-    }
-    //creacion de los hilos para los drones de Carga
-    for (int i = 0; i < M_DONES_CARGA; i++) {
-        ids_drones_carga[i] = i + 1;
-        pthread_create(&drones_carga[i], NULL, dron_carga, &ids_drones_carga[i]);
-    }
-    //creacion de los hilos para los brazos clasificadores
-    for (int i = 0; i < BRAZOS; i++) {
-        ids_brazos[i] = i + 1;
-        pthread_create(&brazo[i], NULL, brazo_clasificado, ids_brazos[i]);
-    }
+    inicializar_hilos();
     /*
     //destruccion de los semaforos
     sem_destroy(&sem_cap_recoleccion);
@@ -122,4 +105,26 @@ int main(int argc, char const *argv[]){
     //printf("\nEl tiempo tomado es: %ld segundos %ld nanosegundos.\n", );
 
     return 0;
+}
+
+void inicializar_hilos(){
+
+    pthread_t hilo_agente; //hilo para el agente
+    pthread_create(&hilo_agente, NULL, agente_desinfeccion, NULL); 
+    pthread_create(&operador_almacen, NULL, operario_almacen, NULL);
+    //creacion de los hilos para los drones
+    for (int i = 0; i < N_DRONES_PR; i++){
+        ids_drones[i]=i+1; //asignacion de los ids unicos 
+        pthread_create(&drones[i], NULL, dron_recolector, &ids_drones[i]);
+    }
+    /*//creacion de los hilos para los drones de Carga
+    for (int i = 0; i < M_DONES_CARGA; i++) {
+        ids_drones_carga[i] = i + 1;
+        pthread_create(&drones_carga[i], NULL, dron_carga, &ids_drones_carga[i]);
+    }
+    //creacion de los hilos para los brazos clasificadores
+    for (int i = 0; i < BRAZOS; i++) {
+        ids_brazos[i] = i + 1;
+        pthread_create(&brazo[i], NULL, brazo_clasificado, ids_brazos[i]);
+    }*/
 }
