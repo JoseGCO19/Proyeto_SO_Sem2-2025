@@ -9,6 +9,8 @@ long calcular_ms(struct timespec inicio, struct timespec fin) {
     long nsec = fin.tv_nsec - inicio.tv_nsec;
     return (seg * 1000) + (nsec / 1000000);
 }
+void despacho_dron(Producto nuevo_pr_saliente,int id_brazo);
+void get_target(Producto item);
 
 void* brazo_clasificado( void *arg){
 
@@ -21,20 +23,20 @@ void* brazo_clasificado( void *arg){
         pthread_mutex_lock(&mutex_buffer_descarga); //para que solo 1 proceso hilo pueda sacar un recurso
         //SECION CRITICA 
         nuevo_pr_saliente= buffer_descarga[indice_producto]; //ademas se protege el uso de indice_producto y el buffer
-        printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomó un producto %s en la posicion %d del almacen termporal", id_brazo, tipo_producto_str[nuevo_pr_saliente.tipo_producto], indice_producto);
+        printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomó un producto %s en la posicion %d del almacen termporal\n", id_brazo, tipo_producto_str[nuevo_pr_saliente.tipo_producto], indice_producto);
         indice_producto = (indice_producto +1) % CAP_ZONA_DESCARGA; 
         pthread_mutex_unlock(&mutex_buffer_descarga); //da espacio al siguiente
         //FASE 2: DESPACHO
         despacho_dron(nuevo_pr_saliente,id_brazo);
         struct timespec tiempo_fin;
         clock_gettime(CLOCK_MONOTONIC,&tiempo_fin);
-        //calcular la duracion 
+        //calcular la duracion S
         long duracion = calcular_ms(nuevo_pr_saliente.tiempo_inicio, tiempo_fin);
         //actualizar metricas 
         pthread_mutex_lock(&mutex_metricas);
         tiempo_total_acum+=duracion;
         productos_procesados++;
-        printf(COLOR_AZUL "[METRICA]" COLOR_RESET " Promedio actual: %.2f ms\n", (tiempo_total_acum / productos_procesados));
+        printf(COLOR_AZUL "\n[METRICA]" COLOR_RESET " Promedio actual: %.2f ms\n", (tiempo_total_acum / productos_procesados));
         pthread_mutex_unlock(&mutex_metricas);
 
         //FASE 4; DEPOSITOS Y OPERADORES DE ALMACEN
@@ -105,7 +107,7 @@ void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){
                 if(sem_trywait(&sem_plataforma_levitacion)==0){
                     printf(COLOR_ROJO "\n BRAZO[%d] " COLOR_RESET " reservo 1 drones y una plataforma.\n", id_brazo);
                     pthread_mutex_lock(&mutex_metricas_levitacion); 
-                    usos_plataforma;        //seccion critica , plataforma de levitacion
+                    usos_plataforma++;        //seccion critica , plataforma de levitacion
                     pthread_mutex_unlock(&mutex_metricas_levitacion);
                     break;
                 }else{
