@@ -1,6 +1,5 @@
 //definicion del brazo recolector 
 #include"main.h"
-
 //int target_deposito; //variable global compartida solo por este proceso
 
 //funcion para calcular ms
@@ -24,7 +23,7 @@ void* brazo_clasificado( void *arg){
         pthread_mutex_lock(&mutex_buffer_descarga);         //para que solo 1 proceso hilo pueda sacar un recurso
         //SECION CRITICA 
         nuevo_pr_saliente= buffer_descarga[indice_consumidor]; //ademas se protege el uso de indice_consumidor y el buffer
-        printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomó un producto %s en la posicion %d del almacen termporal\n", id_brazo, tipo_producto_str[nuevo_pr_saliente.tipo_producto], indice_producto);
+        printf(COLOR_ROJO "\n BRAZO[%d]" COLOR_RESET "tomó un producto %s en la posicion %d del almacen termporal\n", id_brazo, tipo_producto_str[nuevo_pr_saliente.tipo_producto], indice_consumidor);
         indice_consumidor = (indice_consumidor +1) % CAP_ZONA_DESCARGA; 
 
         pthread_mutex_unlock(&mutex_buffer_descarga);       //da espacio al siguiente

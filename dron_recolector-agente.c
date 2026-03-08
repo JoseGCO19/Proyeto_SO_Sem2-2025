@@ -56,7 +56,7 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         //bloquear el buffer para deposirar de forma segura
         pthread_mutex_lock(&mutex_buffer);
         buffer_descarga[indice_productor]=nuevo_producto; //colocar el producto en el buffer
-        printf(COLOR_VERDE "\n Drone[%d]"COLOR_RESET ", deposito producto %d en la posicion [%d] del buffer.\n", id_dron,nuevo_producto.tipo_producto,indice_producto);
+        printf(COLOR_VERDE "\n Drone[%d]"COLOR_RESET ", deposito producto %d en la posicion [%d] del buffer.\n", id_dron,nuevo_producto.tipo_producto,indice_productor);
         //avanzar al indice de forma circular
         indice_productor=(indice_productor+1)%CAP_ZONA_DESCARGA;
         pthread_mutex_unlock(&mutex_buffer); //dar acceso al siguiente hilo

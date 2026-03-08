@@ -23,7 +23,7 @@ sem_t sem_elementos_disp; //0                    //Llama al proceso del brazo. I
 pthread_mutex_t mutex_buffer;                    //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
 Producto buffer_descarga[CAP_ZONA_DESCARGA];     //[Zona de descarga], buffer donde se almacenaran los productos
 int indice_productor=0;    
-int indice_consumido=0;
+int indice_consumidor=0;
 pthread_mutex_t mutex_contador_resultado;                     //lleva el conteo de cuantos productos hay
 
 
