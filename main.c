@@ -70,6 +70,26 @@ int main(int argc, char const *argv[]){
     
     srand(time(NULL));
     //inicializacion de los semaforos para el proceso dron_recolector
+    inicializar_sem();
+    //------ Creacion de los Hilos ------
+    inicializar_hilos();
+    /*
+    //destruccion de los semaforos
+    sem_destroy(&sem_cap_recoleccion);
+    pthread_mutex_destroy(&sem_sala_desinfeccion);
+    sem_destroy(&sem_agente_des);
+    sem_destroy(&sem_fin_des);
+    sem_destroy(&sem_espacios_vacios);
+    sem_destroy(&sem_elementos_disp);
+    pthread_mutex_destroy(&mutex_buffer);
+    */
+    printf("Sistema iniciado. Presiona Ctrl+C para salir.\n");
+    //printf("\nEl tiempo tomado es: %ld segundos %ld nanosegundos.\n", );
+
+    return 0;
+}
+
+void inicializar_sem(){
     sem_init(&sem_cap_recoleccion,0,N_DRONES_PR); //25 capacidad de drones 
     pthread_mutex_init(&sem_sala_desinfeccion,NULL); //este por defecto se inicializa en 1
     sem_init(&sem_agente_des,0,0); //inicializado en 0 dado que debe espera que dron_recolector lo llame
@@ -89,22 +109,6 @@ int main(int argc, char const *argv[]){
         sem_init(&deposito_libre[i],0,3);
         sem_init(&deposito_vaciado[i],0,0);
     }
-    //------ Creacion de los Hilos ------
-    inicializar_hilos();
-    /*
-    //destruccion de los semaforos
-    sem_destroy(&sem_cap_recoleccion);
-    pthread_mutex_destroy(&sem_sala_desinfeccion);
-    sem_destroy(&sem_agente_des);
-    sem_destroy(&sem_fin_des);
-    sem_destroy(&sem_espacios_vacios);
-    sem_destroy(&sem_elementos_disp);
-    pthread_mutex_destroy(&mutex_buffer);
-    */
-    printf("Sistema iniciado. Presiona Ctrl+C para salir.\n");
-    //printf("\nEl tiempo tomado es: %ld segundos %ld nanosegundos.\n", );
-
-    return 0;
 }
 
 void inicializar_hilos(){
