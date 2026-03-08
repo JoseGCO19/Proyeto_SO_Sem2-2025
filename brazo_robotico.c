@@ -1,7 +1,7 @@
 //definicion del brazo recolector 
 #include"main.h"
 
-int target_deposito; //variable global compartida solo por este proceso
+//int target_deposito; //variable global compartida solo por este proceso
 
 //funcion para calcular ms
 long calcular_ms(struct timespec inicio, struct timespec fin) {
@@ -10,14 +10,15 @@ long calcular_ms(struct timespec inicio, struct timespec fin) {
     return (seg * 1000) + (nsec / 1000000);
 }
 void despacho_dron(Producto nuevo_pr_saliente,int id_brazo);
-void get_target(Producto item);
+int get_target(Producto item);
 
 void* brazo_clasificado( void *arg){
 
     Producto nuevo_pr_saliente;
     int id_brazo = *((int*)arg);
-
+    int target_deposito;
     while (1){
+        
         //FASE 1: extraccion del producto
         sem_wait(&sem_elementos_disp);                      //espera a que el dron recolector le avise que ya hay recursos disponibles en el almacen
         pthread_mutex_lock(&mutex_buffer_descarga);         //para que solo 1 proceso hilo pueda sacar un recurso
@@ -27,6 +28,7 @@ void* brazo_clasificado( void *arg){
         indice_producto = (indice_producto +1) % CAP_ZONA_DESCARGA; 
 
         pthread_mutex_unlock(&mutex_buffer_descarga);       //da espacio al siguiente
+
         //FASE 2: DESPACHO
         sem_post(&sem_espacios_vacios);
         despacho_dron(nuevo_pr_saliente,id_brazo);
@@ -34,6 +36,7 @@ void* brazo_clasificado( void *arg){
         clock_gettime(CLOCK_MONOTONIC,&tiempo_fin);
         //calcular la duracion S
         long duracion = calcular_ms(nuevo_pr_saliente.tiempo_inicio, tiempo_fin);
+        
         //actualizar metricas 
         pthread_mutex_lock(&mutex_metricas);
         tiempo_total_acum+=duracion;
@@ -43,7 +46,7 @@ void* brazo_clasificado( void *arg){
 
         //FASE 4; DEPOSITOS Y OPERADORES DE ALMACEN
         pthread_mutex_lock(&mutex_deposito);
-        get_target(nuevo_pr_saliente);
+        target_deposito= get_target(nuevo_pr_saliente);
         deposito[target_deposito]=deposito[target_deposito]+1;
         if(deposito[target_deposito] == 3){
             sem_post(&sem_llamar_operario);
@@ -55,8 +58,8 @@ void* brazo_clasificado( void *arg){
     
     return NULL;
 }
-void get_target(Producto item){
-
+int get_target(Producto item){
+    int target_deposito;
     if(item.tipo_producto == 0){
         pthread_mutex_lock(&mutex_standar);
         target_deposito = indice_deposito_estandar;
@@ -70,73 +73,75 @@ void get_target(Producto item){
     }else{
         target_deposito=7;
     }
+    return target_deposito;
 }
 
-void despacho_dron(Producto nuevo_pr_saliente, int id_brazo) {
-    if (nuevo_pr_saliente.tipo_producto == 1) { // Refrigerado (2 drones)
-        // Intentamos reservar ambos de forma atómica
-        if (sem_trywait(&sem_drones_carga) == 0) {
-            if (sem_trywait(&sem_drones_carga) == 0) {
-                // ÉXITO: Ambos reservados
-                printf(COLOR_ROJO "\n BRAZO[%d] " COLOR_RESET "reservo 2 drones.\n ", id_brazo);
-            } else {
-                // Solo pudimos reservar 1, liberamos y marcamos bloqueo evitado
-                sem_post(&sem_drones_carga);
-                goto bloqueo; 
+void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){
+    int flag=1;
+    if(nuevo_pr_saliente.tipo_producto == 1){
+            //producto refrigerado ; requiere 2 drones de carga
+            while (flag){
+                sem_wait(&sem_drones_carga); //este debera estar inicializadp en 4 
+                if(sem_trywait(&sem_drones_carga) == 0){ 
+                    printf(COLOR_ROJO "\n BRAZO[%d] " COLOR_RESET "reservo 2 drones.\n ",id_brazo);
+                    flag=0;
+                }else{
+                    sem_post(&sem_drones_carga); //suelta 1
+                    pthread_mutex_lock(&mutex_metricas);
+                    bloqueos_evitados++;
+                    pthread_mutex_unlock(&mutex_metricas);
+                    printf(COLOR_AMARILLO "\n BRAZO[%d] " COLOR_ROJO "evito bloqueo por falta de drones. Reintentando... \n",id_brazo);
+                    sleep(1);
+                }
             }
-        } else {
-            bloqueo:
-            pthread_mutex_lock(&mutex_metricas);
-            bloqueos_evitados++;
-            pthread_mutex_unlock(&mutex_metricas);
-            printf(COLOR_AMARILLO "\n BRAZO[%d] " COLOR_ROJO "Bloqueo evitado (drones).\n",id_brazo);
+            pthread_mutex_lock(&mutex_buzon);
+            buzon_id_brazo = id_brazo;
+            sem_post(&sem_iniciar_viaje_dron);
+            sem_post(&sem_iniciar_viaje_dron);
+            pthread_mutex_unlock(&mutex_buzon);
+            printf(COLOR_AMARILLO "\n BRAZO[%d] envio 2 drones." COLOR_RESET " esperando confirmacion...\n",id_brazo);
+
+            //espera confirmacion en su semaforo privado 
+            sem_wait(&sem_fin_viaje_brazo[id_brazo-1]);
+            sem_wait(&sem_fin_viaje_brazo[id_brazo-1]);
+            //libera los recursos
+            sem_post(&sem_drones_carga);
+            sem_post(&sem_drones_carga);
             
-            // Si fallamos, usamos sem_wait estándar para esperar a que haya recursos
-            // esto garantiza que el brazo no se "desaparezca" sino que espere en cola
-            sem_wait(&sem_drones_carga);
-            sem_wait(&sem_drones_carga);
+        }else if(nuevo_pr_saliente.tipo_producto == 2){
+            //PRODUCTO ULTRADELICADO - requiere 1 dron + 1 plataforma de levitacion 
+            while (flag){
+                sem_wait(&sem_drones_carga);
+                if(sem_trywait(&sem_plataforma_levitacion)==0){
+                    printf(COLOR_ROJO "\n BRAZO[%d] " COLOR_RESET " reservo 1 drones y una plataforma.\n", id_brazo);
+                    pthread_mutex_lock(&mutex_metricas_levitacion); 
+                    usos_plataforma++;        //seccion critica , plataforma de levitacion
+                    pthread_mutex_unlock(&mutex_metricas_levitacion);
+                    flag=0;
+                }else{
+                    sem_post(&sem_drones_carga);
+                    pthread_mutex_lock(&mutex_metricas); //para la evitacion de bloqueos
+                    bloqueos_evitados++; //seccion critca
+                    pthread_mutex_unlock(&mutex_metricas);
+                    printf(COLOR_ROJO "\n BRAZO[%d] " COLOR_RESET "evito bloqueo por plataforma ocupada. Reintentando...\n",id_brazo);
+                    sleep(1);
+                    
+                }
+            }
+            //enviar orden al buzon 
+            pthread_mutex_lock(&mutex_buzon);
+            buzon_id_brazo = id_brazo;
+            sem_post(&sem_iniciar_viaje_dron);
+            pthread_mutex_unlock(&mutex_buzon);
+
+            printf(COLOR_ROJO "\n BRAZO[%d] "COLOR_RESET "envio 1 dron con la plataforma.Esperando...\n",id_brazo);
+            sem_wait(&sem_fin_viaje_brazo[id_brazo-1]);
+            sem_post(&sem_drones_carga);
+            sem_post(&sem_plataforma_levitacion); //libera la plataforma
+        }else{
+            //PRODUCTO ESTANDAR
+            printf(COLOR_ROJO "\n BRAZO[%d] "COLOR_RESET "procesando producto estandar.\n",id_brazo);
+            sleep(1);
         }
 
-        // Lógica de envío (igual a la anterior)
-        pthread_mutex_lock(&mutex_buzon);
-        buzon_id_brazo = id_brazo;
-        sem_post(&sem_iniciar_viaje_dron);
-        sem_post(&sem_iniciar_viaje_dron);
-        pthread_mutex_unlock(&mutex_buzon);
-        
-        sem_wait(&sem_fin_viaje_brazo[id_brazo - 1]);
-        sem_wait(&sem_fin_viaje_brazo[id_brazo - 1]);
-        sem_post(&sem_drones_carga);
-        sem_post(&sem_drones_carga);
-    } 
-    else if (nuevo_pr_saliente.tipo_producto == 2) { // Ultradelicado (1 dron + 1 plataforma)
-        if (sem_trywait(&sem_drones_carga) == 0 && sem_trywait(&sem_plataforma_levitacion) == 0) {
-            // ÉXITO: Ambos reservados
-            printf(COLOR_ROJO "\n BRAZO[%d] " COLOR_RESET "reservo 1 dron y 1 plataforma.\n", id_brazo);
-            pthread_mutex_lock(&mutex_metricas_levitacion);
-            usos_plataforma++;
-            pthread_mutex_unlock(&mutex_metricas_levitacion);
-        } else {
-            // Si algo falló, liberamos lo que pudimos haber tomado y marcamos bloqueo
-            // Nota: debes asegurar que si uno tomó el dron y el otro falló, liberes el dron
-            // (Simplificado aquí para claridad)
-            pthread_mutex_lock(&mutex_metricas);
-            bloqueos_evitados++;
-            pthread_mutex_unlock(&mutex_metricas);
-            
-            // Espera bloqueante segura
-            sem_wait(&sem_drones_carga);
-            sem_wait(&sem_plataforma_levitacion);
-        }
-
-        // ... lógica de envío igual ...
-        pthread_mutex_lock(&mutex_buzon);
-        buzon_id_brazo = id_brazo;
-        sem_post(&sem_iniciar_viaje_dron);
-        pthread_mutex_unlock(&mutex_buzon);
-        
-        sem_wait(&sem_fin_viaje_brazo[id_brazo - 1]);
-        sem_post(&sem_drones_carga);
-        sem_post(&sem_plataforma_levitacion);
-    }
 }
