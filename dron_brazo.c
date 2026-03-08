@@ -1,6 +1,8 @@
 //definicion del brazo recolector 
 #include"main.h"
 
+int target_deposito; //variable global compartida solo por este proceso
+
 //funcion para calcular ms
 long calcular_ms(struct timespec inicio, struct timespec fin) {
     long seg = fin.tv_sec - inicio.tv_sec;
@@ -12,6 +14,7 @@ void* brazo_clasificado( void *arg){
 
     Producto nuevo_pr_saliente;
     int id_brazo = *((int*)arg);
+
     while (1){
         //FASE 1: extraccion del producto
         sem_wait(&sem_elementos_disp); //espera a que el dron recolector le avise que ya hay recursos disponibles en el almacen
@@ -36,25 +39,34 @@ void* brazo_clasificado( void *arg){
         pthread_mutex_unlock(&mutex_metricas);
 
         //FASE 4; DEPOSITOS Y OPERADORES DE ALMACEN
-        int target_deposito;
-        if(nuevo_pr_saliente.tipo_producto == 0)
-            target_deposito= rand() %4 ; //del o al 3
-        else if(nuevo_pr_saliente.tipo_producto == 1)
-            target_deposito = 4 + (rand() % 3); //indices del 4 al 6
-        else
-            target_deposito = 7; //indice 7
+        get_target(nuevo_pr_saliente);
+        deposito[target_deposito]=deposito[target_deposito]+1;
+        if(deposito[target_deposito] == 3){
+            
+        }
         
 
 
     }
     
 
-
-
-
-
-
     return NULL;
+}
+void get_target(Producto item){
+
+    if(item.tipo_producto == 0){
+        pthread_mutex_lock(&mutex_standar);
+        target_deposito = indice_deposito_estandar;
+        indice_deposito_estandar = (target_deposito + 1) % 4;
+        pthread_mutex_unlock(&mutex_standar);
+    }else if(item.tipo_producto == 1){
+        pthread_mutex_lock(&mutex_refri);
+        target_deposito = indice_deposito_refrigerado +4;
+        indice_deposito_refrigerado = (indice_deposito_refrigerado +1 ) % 3;
+        pthread_mutex_unlock(&mutex_refri);
+    }else{
+        target_deposito=7;
+    }
 }
 
 void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){

@@ -37,9 +37,12 @@ extern sem_t sem_espacios_vacios;                   //Limita la entrada a la zon
 extern sem_t sem_elementos_disp;                    //Llama al proceso del brazo. Indica que dejo elementos en la zona de descarga
 extern sem_t sem_plataforma;                        //Semaforo que limita el uso de la PLataforma Magnetica
 
+//VARIABLES PARA EL DEPOSITO
 extern int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
 extern int indice_deposito_estandar;                //Lleva el indice del vector deposito en la seccion de productos Estandar
 extern int indice_deposito_refrigerado;             //Lleva el indice del vector deposito en la seccion de productos Refrigerados
+extern pthread_mutex_t mutex_standar; 
+extern pthread_mutex_t mutex_refri; 
 
 extern pthread_mutex_t mutex_buffer;                //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
 extern Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer donde se almacenaran los productos
@@ -63,7 +66,7 @@ extern int producto_refrigerado;                    //Variable que lleva la cuen
 extern int producto_ultra_procesado;                //Variable que lleva la cuenta de cuantos productos de tipo Ultra-Procesado se proceso
 
 
-//semaforos para brazos
+//VARIABLES NECESARIAS PARA EL PROCESO BRAZO_RECOLECTOR
 extern pthread_mutex_t mutex_buffer_descarga;
 extern sem_t sem_drones_carga; // inicializar en 1
 extern pthread_mutex_t mutex_metricas; 
@@ -77,10 +80,13 @@ extern pthread_mutex_t mutex_metricas_levitacion;
 extern double tiempo_total_acum;
 extern int productos_procesados;
 
+
 //Semaforos de depositos
 extern sem_t deposito_libre[TOTAL_DEPOSITOS];
 extern pthread_mutex_t mutex_almacen;
 extern sem_t sem_llamar_operario;
 extern pthread_mutex_t mutex_dronCarga;
+
+
 
 #endif

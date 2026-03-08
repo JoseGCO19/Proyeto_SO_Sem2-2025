@@ -50,6 +50,14 @@ int deposito[TOTAL_DEPOSITOS];      //Vector de los depositos
 sem_t deposito_libre[TOTAL_DEPOSITOS]; 
 sem_t deposito_vaciado[TOTAL_DEPOSITOS]; 
 
+//VARIABLES PARA EL DEPOSITO
+int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
+int indice_deposito_estandar=0;                //Lleva el indice del vector deposito en la seccion de productos Estandar
+int indice_deposito_refrigerado=0;  
+pthread_mutex_t mutex_standar; //para el item en el deposito
+pthread_mutex_t mutex_refri; 
+
+
 int main(int argc, char const *argv[]){
     
     srand(time(NULL));
