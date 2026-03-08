@@ -102,10 +102,10 @@ void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){
             //PRODUCTO ULTRADELICADO - requiere 1 dron + 1 plataforma de levitacion 
             while (1){
                 sem_wait(&sem_drones_carga);
-                if(sem_trywait(&sem_plataforma_levitacion == 0)){
+                if(sem_trywait(&sem_plataforma_levitacion )==0){
                     printf(COLOR_ROJO "\n BRAZO[%d] " COLOR_RESET " reservo 1 drones y una plataforma.\n", id_brazo);
                     pthread_mutex_lock(&mutex_metricas_levitacion); 
-                    usos_plataforma;//seccion critaca , plataforma de levitacion
+                    usos_plataforma;        //seccion critica , plataforma de levitacion
                     pthread_mutex_unlock(&mutex_metricas_levitacion);
                     break;
                 }else{
