@@ -77,7 +77,6 @@ extern pthread_mutex_t mutex_almacen;
 extern sem_t sem_llamar_operario;
 extern pthread_mutex_t mutex_dronCarga;
 extern sem_t mutex_deposito;
-extern sem_t sem_respuesta_operador;
 
 
 
