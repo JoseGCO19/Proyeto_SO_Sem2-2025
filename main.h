@@ -44,6 +44,8 @@ extern int indice_deposito_refrigerado;             //Lleva el indice del vector
 extern pthread_mutex_t mutex_standar; 
 extern pthread_mutex_t mutex_refri; 
 extern char tipo_producto_str[3][20];               //Vector de strings para imprimir el tipo de producto en texto
+extern int frecuencias_pr[4][12];                   //Frecuencias de generación de productos para cada tipo
+extern int selector_frecuencia;                    //Índice para seleccionar la frecuencia de generación de productos
 
 extern pthread_mutex_t mutex_buffer;                //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
 extern Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer donde se almacenaran los productos

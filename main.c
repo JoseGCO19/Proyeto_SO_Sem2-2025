@@ -39,10 +39,20 @@ int buzon_id_brazo;
 sem_t sem_iniciar_viaje_dron; //inicializado en 0 (despierta a los drones de carga)
 sem_t sem_fin_viaje_brazo[BRAZOS]; //arreglo de 3 semaforos inicializados en 0( 1 para cada brazo)
 sem_t sem_plataforma_levitacion; //inicializada en 1
-pthread_mutex_t mutex_metricas_levitacion; //paara acceder a la variables uso de plataforma de levitacion 
+pthread_mutex_t mutex_metricas_levitacion;          //para acceder a la variables uso de plataforma de levitacion 
 int usos_plataforma=0;
-int productos_procesados=0; //productos totales procesados
-const char tipo_producto_str[3][20] = {"Estándar", "Refrigerado", "Ultradelicado"}; //para imprimir el tipo de producto en texto
+int productos_procesados=0;                         //productos totales procesados
+const char tipo_producto_str[3][20] = {"Estándar", "Refrigerado", "Ultradelicado"}; 
+                                                    //para imprimir el tipo de producto en texto
+int frecuencias_pr[4][12] = {
+    {0,0,0,0,1,1,1,1,2,2,2,2}, // Frecuencias normales
+    {0,0,0,0,0,0,1,1,1,2,2,2},   // Frecuencias favorables para productos estandar
+    {1,1,1,1,1,1,0,0,0,2,2,2},    // Frecuencias favorables para productos refrigerados
+    {2,2,2,2,2,2,0,0,0,1,1,1}      // Frecuencias favorables para productos ultradelicados
+};
+int selector_frecuencia = 0; // Índice para seleccionar la frecuencia de generación de productos 
+
+
 
 //Cosas Añadidas por Contin
 int ids_brazos[BRAZOS];             //Para almacenar los id de todos los brazos
