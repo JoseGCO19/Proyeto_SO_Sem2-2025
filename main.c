@@ -13,7 +13,7 @@ void* dron_carga(void *arg);
 void* operario_almacen(void *arg);
 void* brazo_clasificado( void *arg);
 void inicializar_hilos();
-
+void inicializar_sem();
 /*
 //VARIABLES PARA EL PROCESO DRONES_RECOLECTORES
 Producto buffer_descarga[CAP_ZONA_DESCARGA]; //buffer 
@@ -155,6 +155,10 @@ int main(int argc, char const *argv[]){
     pthread_mutex_destroy(&mutex_buffer);
     */
     printf("Sistema iniciado. Presiona Ctrl+C para salir.\n");
+    while (1){
+        sleep(1);
+    }
+    
     //printf("\nEl tiempo tomado es: %ld segundos %ld nanosegundos.\n", );
 
     return 0;
@@ -174,12 +178,9 @@ void inicializar_hilos(){
         ids_brazo[i]=i+1;
         pthread_create(&brazo[i],NULL, brazo_clasificado, &ids_brazo[i]);
     }
-
-    /*//creacion de los hilos para los drones de Carga
-    for (int i = 0; i < M_DONES_CARGA; i++) {
-        ids_drones_carga[i] = i + 1;
-        pthread_create(&drones_carga[i], NULL, dron_carga, &ids_drones_carga[i]);
+    for (int i = 0; i < M_DONES_CARGA; i++){
+        ids_drones_carga[i]= i+1;
+        pthread_create(&drones_carga[i], NULL, dron_carga,&ids_drones_carga[i]);
     }
-    */
     
 }
