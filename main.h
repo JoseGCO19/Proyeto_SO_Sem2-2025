@@ -45,7 +45,7 @@ extern void destruir_sem();
 extern void mostrar_resultados();
 
 //VARIABLE PARA CONTROLAR EJECUCIÓN
-extern int sistema_activo;  // 1 = ejecutar, 0 = detener
+extern int opcion;                                  //Variable que especifica la opcion que tomo el usuario
 
 //Hilos e ID's
 extern pthread_t drones[N_DRONES_PR];               //definicion de un array de 25 drones (hilos)
@@ -102,6 +102,8 @@ extern sem_t sem_plataforma_levitacion;
 extern pthread_mutex_t mutex_metricas_levitacion;
 extern double tiempo_total_acum;
 extern int productos_procesados;
+extern sem_t sem_finalizo_producto;
+extern int productos_necesarios;
 
 //Semaforos de depositos
 extern sem_t deposito_vaciado[TOTAL_DEPOSITOS];

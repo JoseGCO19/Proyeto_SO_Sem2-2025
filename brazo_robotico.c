@@ -38,6 +38,9 @@ void* brazo_clasificado( void *arg){
         
         //actualizar metricas 
         pthread_mutex_lock(&mutex_metricas);
+        if((productos_procesados == productos_necesarios) && (opcion==2)){
+            sem_post(&sem_finalizo_producto);
+        }
         tiempo_total_acum+=duracion;
         productos_procesados++;
         switch (nuevo_pr_saliente.tipo_producto)
@@ -53,6 +56,9 @@ void* brazo_clasificado( void *arg){
             break;
         }
         printf(COLOR_AZUL "\n[METRICA]" COLOR_RESET " Promedio actual: %.2f ms\n", (tiempo_total_acum / productos_procesados));
+        if(productos_procesados == productos_necesarios){
+            sem_post(&sem_finalizo_producto);
+        }
         pthread_mutex_unlock(&mutex_metricas);
 
         //FASE 3; DEPOSITOS Y OPERADORES DE ALMACEN

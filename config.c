@@ -14,6 +14,8 @@ void* brazo_clasificado( void *arg);
 void inicializar_hilos();
 void inicializar_sem();
 
+int opcion;
+
 //VARIABLE PARA DRONES_RECOLECTORES
 sem_t sem_cap_recoleccion;  //25                 //Limita la entrada al centro 
 pthread_mutex_t sem_sala_desinfeccion;           //Mutex para la entrada a la sala de desinfeccion
@@ -65,6 +67,8 @@ sem_t sem_plataforma_levitacion;                //inicializar en 1//Mutex para e
 pthread_mutex_t mutex_metricas_levitacion;      //Mutex que cuida el contador de usos de la Plataforma de Levitacion
 double tiempo_total_acum=0;
 int productos_procesados=0;                     //Contador de los productos totales
+sem_t sem_finalizo_producto;                    //Semafdoro para finalizar el proceso de la simulacion por cantidad de productos
+int productos_necesarios;
 
 //Semaforos de depositos
 sem_t deposito_vaciado[TOTAL_DEPOSITOS]; //inicializado en 3
@@ -87,6 +91,7 @@ void inicializar_sem(){
     sem_init(&sem_drones_carga,0,4);
     sem_init(&sem_iniciar_viaje_dron,0,0);
     sem_init(&sem_plataforma_levitacion,0,1);
+    sem_init(&sem_finalizo_producto,0,0);
     pthread_mutex_init(&mutex_deposito,NULL);
     pthread_mutex_init(&mutex_buffer,NULL); //para el acceso al buffer , 1 por hilo
     pthread_mutex_init(&mutex_dronCarga,NULL); //para el acceso al viaje del dron, 1 por hilo

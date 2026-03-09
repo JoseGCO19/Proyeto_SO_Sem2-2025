@@ -29,8 +29,35 @@ void iniciar_simulacion_segundos(int segundos) {
     printf("\nSimulación completada. Volviendo al menú...\n");
 }
 
+void iniciar_simulacion_productos(int productos){
+    if(productos!=0){
+        printf("\nINICIANDO SIMULACIÓN POR %d PRODUCTOS...\n", productos);
+        //Inicializar semaforos
+        inicializar_sem();
+        // Crear todos los hilos
+        inicializar_hilos();
+        // Esperar a que se cumpla la cantidad de productos necesarios
+        sem_wait(&sem_finalizo_producto);
+        // Cancelar todos los hilos
+        printf("\nPRODUCTOS COMPLETADOS. DETENIENDO SIMULACIÓN...\n");
+        pthread_cancel(hilo_agente);
+        pthread_cancel(operador_almacen);
+        for (int i = 0; i < N_DRONES_PR; i++) {
+            pthread_cancel(drones[i]);
+        }
+        for (int i = 0; i < BRAZOS; i++) {
+            pthread_cancel(brazo[i]);
+        }
+        for (int i = 0; i < M_DONES_CARGA; i++) {
+            pthread_cancel(drones_carga[i]);
+        }
+    }
+    // Mostrar resultados
+    mostrar_resultados();
+    printf("\nSimulación completada. Volviendo al menú...\n");
+}
+
 void menu_principal() {
-    int opcion; //Indica la opción del usuario
     int segundos; //Segundos que tardará la simulación
     //Muestra el menú principal
     printf("\n═══════════════════════════════════════\n");
@@ -51,7 +78,9 @@ void menu_principal() {
             iniciar_simulacion_segundos(segundos);
             break;
         case 2:
-            printf("AUN NO IMPLEMENTADO..");
+            printf("Ingrese la cantidad de productos a procesar:");
+            scanf("%d", &productos_necesarios);
+            iniciar_simulacion_productos(productos_necesarios);
             break;
         case 3:
             printf("Saliendo del sistema...\n");
