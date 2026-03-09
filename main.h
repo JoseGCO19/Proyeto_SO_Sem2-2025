@@ -87,7 +87,7 @@ extern int selector_frecuencia;                    //Índice para seleccionar la
 extern int usos_plataforma;                         //Variable que cuenta los usos que tuvo la plataforma magnetica a lo largo del programa
 extern int producto_estandar;                       //Variable que lleva la cuenta de cuantos productos de tipo Estandar se proceso
 extern int producto_refrigerado;                    //Variable que lleva la cuenta de cuantos productos de tipo Refrigerado se proceso
-extern int producto_ultra_procesado;                //Variable que lleva la cuenta de cuantos productos de tipo Ultra-Procesado se proceso
+extern int producto_ultra_delicado;                //Variable que lleva la cuenta de cuantos productos de tipo Ultra-Procesado se proceso
 //mutex_deposito
 //VARIABLES NECESARIAS PARA EL PROCESO BRAZO_RECOLECTOR
 extern pthread_mutex_t mutex_buffer_descarga;

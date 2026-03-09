@@ -34,7 +34,7 @@ int indice_deposito_estandar=0;                //Lleva el indice del vector depo
 int indice_deposito_refrigerado=0;             //Lleva el indice del vector deposito en la seccion de productos Refrigerados
 pthread_mutex_t mutex_standar;                 //Permite editar el indice del vector deposito en el rango de los depositos estandar
 pthread_mutex_t mutex_refri;                   //Permite editar el indice del vector deposito en el rango de los depositos Refrigerados
-char tipo_producto_str[3][20];               //Vector de strings para imprimir el tipo de producto en texto
+char tipo_producto_str[3][20];                 //Vector de strings para imprimir el tipo de producto en texto
 
 //Hilos e ID's
 pthread_t drones[N_DRONES_PR];               //definicion de un array de 25 drones (hilos)
@@ -50,7 +50,7 @@ pthread_t hilo_agente;
 int usos_plataforma=0;                         //Variable que cuenta los usos que tuvo la plataforma magnetica a lo largo del programa
 int producto_estandar=0;                       //Variable que lleva la cuenta de cuantos productos de tipo Estandar se proceso
 int producto_refrigerado=0;                    //Variable que lleva la cuenta de cuantos productos de tipo Refrigerado se proceso
-int producto_ultra_procesado=0;                //Variable que lleva la cuenta de cuantos productos de tipo Ultra-Procesado se proceso
+int producto_ultra_delicado=0;                //Variable que lleva la cuenta de cuantos productos de tipo Ultra-Procesado se proceso
 
 //VARIABLES NECESARIAS PARA EL PROCESO BRAZO_RECOLECTOR
 pthread_mutex_t mutex_buffer_descarga;
@@ -141,7 +141,7 @@ void mostrar_resultados() {
     printf("Total productos procesados: %d\n", productos_procesados);
     printf("   ├─ Estándar    : %d\n", producto_estandar);
     printf("   ├─ Refrigerado : %d\n", producto_refrigerado);
-    printf("   └─ Ultra       : %d\n", producto_ultra_procesado);
+    printf("   └─ Ultra       : %d\n", producto_ultra_delicado);
     printf("Usos de plataforma magnética: %d\n", usos_plataforma);
     printf("Bloqueos evitados: %d\n", bloqueos_evitados);
     if (productos_procesados > 0) {

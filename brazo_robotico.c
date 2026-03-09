@@ -49,17 +49,18 @@ void* brazo_clasificado( void *arg){
             producto_refrigerado++;
             break;
         case 2:    
-            producto_ultra_procesado++;
+            producto_ultra_delicado++;
             break;
         }
         printf(COLOR_AZUL "\n[METRICA]" COLOR_RESET " Promedio actual: %.2f ms\n", (tiempo_total_acum / productos_procesados));
         pthread_mutex_unlock(&mutex_metricas);
 
-        //FASE 4; DEPOSITOS Y OPERADORES DE ALMACEN
+        //FASE 3; DEPOSITOS Y OPERADORES DE ALMACEN
         target_deposito= get_target(nuevo_pr_saliente);
         sem_wait(&deposito_libre[target_deposito]);
         pthread_mutex_lock(&mutex_deposito);
         deposito[target_deposito]=deposito[target_deposito]+1;
+
         if(deposito[target_deposito] == 3){
             sem_post(&sem_llamar_operario);
             pthread_mutex_unlock(&mutex_deposito);
@@ -106,8 +107,9 @@ void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){
                     sleep(1);
                 }
             }
+            //Emite signals para despertar a los drones
             pthread_mutex_lock(&mutex_buzon);
-            buzon_id_brazo = id_brazo;
+            buzon_id_brazo = id_brazo;          //Se le envia la ID del brazo al dron para no confundirlo con otro brazo
             sem_post(&sem_iniciar_viaje_dron);
             sem_post(&sem_iniciar_viaje_dron);
             pthread_mutex_unlock(&mutex_buzon);
