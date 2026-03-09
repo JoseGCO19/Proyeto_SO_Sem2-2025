@@ -111,7 +111,7 @@ extern sem_t deposito_libre[TOTAL_DEPOSITOS];
 extern pthread_mutex_t mutex_almacen;
 extern sem_t sem_llamar_operario;
 extern pthread_mutex_t mutex_dronCarga;
-extern pthread_mutex_t mutex_deposito;
+//extern pthread_mutex_t mutex_deposito;
 
 
 

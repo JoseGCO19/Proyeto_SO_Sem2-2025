@@ -64,19 +64,21 @@ void* brazo_clasificado( void *arg){
         //FASE 3; DEPOSITOS Y OPERADORES DE ALMACEN
         target_deposito= get_target(nuevo_pr_saliente);
         sem_wait(&deposito_libre[target_deposito]);
-        pthread_mutex_lock(&mutex_deposito);
+        pthread_mutex_lock(&mutex_almacen);
         deposito[target_deposito]=deposito[target_deposito]+1;
 
         if(deposito[target_deposito] == 3){
             sem_post(&sem_llamar_operario);
-            pthread_mutex_unlock(&mutex_deposito);
+            pthread_mutex_unlock(&mutex_almacen);
             sem_wait(&deposito_vaciado[target_deposito]);
         }else
-            pthread_mutex_unlock(&mutex_deposito);
+            pthread_mutex_unlock(&mutex_almacen);
     }
     
     return NULL;
 }
+
+//Elegir el siguiente deposito destino del producto item
 int get_target(Producto item){
     int target_deposito;
     if(item.tipo_producto == 0){
@@ -95,6 +97,7 @@ int get_target(Producto item){
     return target_deposito;
 }
 
+//Define cuantos drones se deben despachar dependiendo del tipo de producto
 void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){
     int flag=1;
     if(nuevo_pr_saliente.tipo_producto == 1){

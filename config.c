@@ -80,7 +80,7 @@ sem_t deposito_libre[TOTAL_DEPOSITOS]; //inicializado en 0
 pthread_mutex_t mutex_almacen;
 sem_t sem_llamar_operario;
 pthread_mutex_t mutex_dronCarga;
-pthread_mutex_t mutex_deposito;
+//pthread_mutex_t mutex_deposito;
 
 //INICIALIZACION DE SEMAFOROS
 
@@ -96,7 +96,7 @@ void inicializar_sem(){
     sem_init(&sem_iniciar_viaje_dron,0,0);
     sem_init(&sem_plataforma_levitacion,0,1);
     sem_init(&sem_finalizo_producto,0,0);
-    pthread_mutex_init(&mutex_deposito,NULL);
+    //pthread_mutex_init(&mutex_deposito,NULL);
     pthread_mutex_init(&mutex_buffer,NULL); //para el acceso al buffer , 1 por hilo
     pthread_mutex_init(&mutex_dronCarga,NULL); //para el acceso al viaje del dron, 1 por hilo
     pthread_mutex_init(&mutex_almacen,NULL); //Para el acceso al almacen, 1 por hilo
