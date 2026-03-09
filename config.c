@@ -43,7 +43,7 @@ int indice_deposito_estandar=0;                //Lleva el indice del vector depo
 int indice_deposito_refrigerado=0;             //Lleva el indice del vector deposito en la seccion de productos Refrigerados
 pthread_mutex_t mutex_standar;                 //Permite editar el indice del vector deposito en el rango de los depositos estandar
 pthread_mutex_t mutex_refri;                   //Permite editar el indice del vector deposito en el rango de los depositos Refrigerados
-char tipo_producto_str[3][20];                 //Vector de strings para imprimir el tipo de producto en texto
+char tipo_producto_str[3][20]={"Estandar","Refrigerado","Ultra-delicado"};                 //Vector de strings para imprimir el tipo de producto en texto
 
 //Hilos e ID's
 pthread_t* drones;               //definicion de un array de 25 drones (hilos)
