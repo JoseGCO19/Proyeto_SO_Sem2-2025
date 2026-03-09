@@ -75,12 +75,12 @@ void* agente_desinfeccion(void* arg) {
 }
 
 int elegir_producto(){
-    if(estandar == 1){
-        return rand()%3;
+    if(estandar == 1){          //Si no se ha cambiado la configuracion estandar
+        return rand()%3;        //entonces la probabilidad es equitativa para todos
     }
     else{
         int producto;
-        producto = rand() % 100;
+        producto = rand() % 100;//Se va evaluando por intervalos
         if(producto < prob_standar){
             return 0;
         }

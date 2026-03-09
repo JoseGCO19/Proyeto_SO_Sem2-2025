@@ -47,6 +47,7 @@ void* brazo_clasificado( void *arg){
             sem_post(&sem_finalizo_producto);
         }
         conteo_metricas(nuevo_pr_saliente.tipo_producto,duracion);
+        printf(COLOR_VERDE "\nBrazo[%d]" COLOR_RESET " Ha guardado un producto de tipo " COLOR_ROJO "%d" COLOR_RESET "\n",id_brazo,nuevo_pr_saliente.tipo_producto);
         printf(COLOR_AZUL "\n[METRICA]" COLOR_RESET " Promedio actual: %.2f ms\n", (tiempo_total_acum / productos_procesados));
         if(productos_procesados == productos_necesarios){
             sem_post(&sem_finalizo_producto);
@@ -63,7 +64,6 @@ void* brazo_clasificado( void *arg){
         }else
             pthread_mutex_unlock(&mutex_almacen);
     }
-    
     return NULL;
 }
 

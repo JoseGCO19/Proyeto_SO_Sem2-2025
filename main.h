@@ -48,17 +48,17 @@ extern void mostrar_resultados();
 
 //VARIABLE PARA CONTROLAR EJECUCIÓN EN EL MENU
 extern int opcion;                                  //Variable que especifica la opcion que tomo el usuario
-extern int estandar;                                //indica si la configuracion es estandar o no             
+extern int estandar;                                //Indica si la configuracion es estandar o no             
 
 //Hilos e ID's
-extern pthread_t* drones;               //definicion de un array de 25 drones (hilos)
-extern int* ids_drones;                 //ID's de los Drones de Recoleccion
-extern pthread_t drones_carga[M_DONES_CARGA];
-extern int ids_drones_carga[M_DONES_CARGA];
-extern pthread_t brazo[BRAZOS];
-extern int ids_brazo[BRAZOS];
-extern pthread_t operador_almacen;
-extern pthread_t hilo_agente;
+extern pthread_t* drones;                       //Definicion de un array de drones (hilos)
+extern int* ids_drones;                         //ID's de los Drones de Recoleccion
+extern pthread_t drones_carga[M_DONES_CARGA];   //Hilos de los drones de carga
+extern int ids_drones_carga[M_DONES_CARGA];     //ID's drones de carga
+extern pthread_t brazo[BRAZOS];                 //Hilos de brazos roboticos
+extern int ids_brazo[BRAZOS];                   //ID's de los brazos
+extern pthread_t operador_almacen;              //Hilo del Operador del almacen
+extern pthread_t hilo_agente;                   //Hilo del agente
 
 // Declaración de variables globales (EXPORT)
 
@@ -69,19 +69,19 @@ extern sem_t sem_agente_des;                        //Despierta al agente de des
 extern sem_t sem_fin_des;                           //Semaforo donde el Dron recolector espera hasta ser desinfectado
 extern sem_t sem_espacios_vacios;                   //Limita la entrada a la zona de descarga
 extern sem_t sem_elementos_disp;                    //Llama al proceso del brazo. Indica que dejo elementos en la zona de descarga
-extern pthread_mutex_t mutex_buffer;                //permite la modificacion en la estructura que almacena los elementos de la zona de descarga
+extern pthread_mutex_t mutex_buffer;                //Permite la modificacion en la estructura que almacena los elementos de la zona de descarga
 extern Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer donde se almacenaran los productos
-extern pthread_mutex_t mutex_contador_resultado;
-extern int indice_productor;                         //lleva el conteo de cuantos productos hay
-extern int indice_consumidor;
-extern int prob_standar;
-extern int prob_refrigerado;
+extern pthread_mutex_t mutex_contador_resultado;    //Mutex que permite el conteo exclusivo de los resultados
+extern int indice_productor;                        //Lleva el indice del buffer por parte de los brazos
+extern int indice_consumidor;                       //Lleva el indice del buffer por parte de los drones
+extern int prob_standar;                            //Variable para marcar la probabilidad de que salga un producto de tipo estandar
+extern int prob_refrigerado;                        //Variable para marcar la probabilidad de que salga un producto de tipo refrigerado
 
 //VARIABLES PARA EL DEPOSITO
 extern int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
 extern int indice_deposito_estandar;                //Lleva el indice del vector deposito en la seccion de productos Estandar
 extern int indice_deposito_refrigerado;             //Lleva el indice del vector deposito en la seccion de productos Refrigerados
-extern pthread_mutex_t mutex_standar; 
+extern pthread_mutex_t mutex_standar;
 extern pthread_mutex_t mutex_refri; 
 extern char tipo_producto_str[3][20];               //Vector de strings para imprimir el tipo de producto en texto
 extern int frecuencias_pr[4][12];                   //Frecuencias de generación de productos para cada tipo
@@ -95,26 +95,26 @@ extern int producto_ultra_delicado;                //Variable que lleva la cuent
 //mutex_deposito
 //VARIABLES NECESARIAS PARA EL PROCESO BRAZO_RECOLECTOR
 extern pthread_mutex_t mutex_buffer_descarga;
-extern sem_t sem_drones_carga; // inicializar en 4
-extern pthread_mutex_t mutex_metricas; 
+extern sem_t sem_drones_carga;                      //Lleva el conteo de reservas de los drones de carga
+extern pthread_mutex_t mutex_metricas;              //Mutex que resguarda la edicion del conteo de las metricas
 extern int bloqueos_evitados;
 extern pthread_mutex_t mutex_buzon;
 extern int buzon_id_brazo;
-extern sem_t sem_iniciar_viaje_dron; 
-extern sem_t sem_fin_viaje_brazo[BRAZOS];
-extern sem_t sem_plataforma_levitacion;
-extern pthread_mutex_t mutex_metricas_levitacion;
-extern double tiempo_total_acum;
-extern int productos_procesados;
+extern sem_t sem_iniciar_viaje_dron;                //Semaforo inicializado en 0 para evitar que el dron de carga inicie su viaje sin una señal
+extern sem_t sem_fin_viaje_brazo[BRAZOS];           //Vector de semaforos que permite a los drones de carga saber a cual es el brazo que estan ayudando
+extern sem_t sem_plataforma_levitacion;             //Semaforo que limita el uso de la plataforma
+extern pthread_mutex_t mutex_metricas_levitacion;   //Mutex que cuida el contador de usos de la plataforma de levitacion
+extern double tiempo_total_acum;                    //Guarda el tiempo total acumulado hasta ese momento
+extern int productos_procesados;                    //Contador de productos que se han procesado
 extern sem_t sem_finalizo_producto;
-extern int productos_necesarios;
+extern int productos_necesarios;                    //Cantidad de productos que son necesarios producir
 
 //Semaforos de depositos
 extern sem_t deposito_vaciado[TOTAL_DEPOSITOS];
 extern sem_t deposito_libre[TOTAL_DEPOSITOS];
 extern pthread_mutex_t mutex_almacen;
-extern sem_t sem_llamar_operario;
-extern pthread_mutex_t mutex_dronCarga;
+extern sem_t sem_llamar_operario;                   //Semaforo que controla la activacion del Operario del Almacen
+extern pthread_mutex_t mutex_dron_carga;            //Semaforo que protege la lectura del id del brazo al que el dron de carga va a ayudar
 //extern pthread_mutex_t mutex_deposito;
 
 
