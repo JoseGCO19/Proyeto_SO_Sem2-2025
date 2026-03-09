@@ -14,6 +14,8 @@ void* brazo_clasificado( void *arg);
 void inicializar_hilos();
 void inicializar_sem();
 
+//VARIABLES MENU
+int estandar = 0;
 int opcion;
 
 //VARIABLE PARA DRONES_RECOLECTORES
@@ -28,6 +30,8 @@ Producto buffer_descarga[CAP_ZONA_DESCARGA];     //[Zona de descarga], buffer do
 int indice_productor=0;    
 int indice_consumidor=0;
 pthread_mutex_t mutex_contador_resultado;                     //lleva el conteo de cuantos productos hay
+int prob_standar;
+int prob_ultradelicado;
 
 
 //VARIABLES PARA EL DEPOSITO
