@@ -64,7 +64,7 @@ void menu_principal() {
         printf("\n═══════════════════════════════════════\n");
         printf("       Configuraciones preliminares\n");
         printf("═══════════════════════════════════════\n");
-        printf("1. Seguir con la configuracion estandar (Probabilidades equitativas, 10 drones)\n");
+        printf("1. Seguir con la configuracion estandar (Probabilidades equitativas, 25 drones)\n");
         printf("2. Cambiar la probabilidad de los productos\n");
         printf("3. Cambiar la cantidad de drones que entran al recinto\n");
         printf("4. Aplicar Cambios\n");
