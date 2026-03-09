@@ -10,6 +10,7 @@ long calcular_ms(struct timespec inicio, struct timespec fin) {
 }
 void despacho_dron(Producto nuevo_pr_saliente,int id_brazo);
 int get_target(Producto item);
+void conteo_metricas(int tipo_producto,int duracion);
 
 void* brazo_clasificado( void *arg){
 
@@ -35,35 +36,23 @@ void* brazo_clasificado( void *arg){
         clock_gettime(CLOCK_MONOTONIC,&tiempo_fin);
         //calcular la duracion S
         long duracion = calcular_ms(nuevo_pr_saliente.tiempo_inicio, tiempo_fin);
-        
+
+        //FASE 3; DEPOSITOS Y OPERADORES DE ALMACEN
+        target_deposito= get_target(nuevo_pr_saliente);
+        sem_wait(&deposito_libre[target_deposito]);
+
         //actualizar metricas 
         pthread_mutex_lock(&mutex_metricas);
         if((productos_procesados == productos_necesarios) && (opcion==2)){
             sem_post(&sem_finalizo_producto);
         }
-        tiempo_total_acum+=duracion;
-        productos_procesados++;
-        switch (nuevo_pr_saliente.tipo_producto)
-        {
-        case 0:
-            producto_estandar++;
-            break;
-        case 1:
-            producto_refrigerado++;
-            break;
-        case 2:    
-            producto_ultra_delicado++;
-            break;
-        }
+        conteo_metricas(nuevo_pr_saliente.tipo_producto,duracion);
         printf(COLOR_AZUL "\n[METRICA]" COLOR_RESET " Promedio actual: %.2f ms\n", (tiempo_total_acum / productos_procesados));
         if(productos_procesados == productos_necesarios){
             sem_post(&sem_finalizo_producto);
         }
         pthread_mutex_unlock(&mutex_metricas);
-
-        //FASE 3; DEPOSITOS Y OPERADORES DE ALMACEN
-        target_deposito= get_target(nuevo_pr_saliente);
-        sem_wait(&deposito_libre[target_deposito]);
+        
         pthread_mutex_lock(&mutex_almacen);
         deposito[target_deposito]=deposito[target_deposito]+1;
 
@@ -76,6 +65,23 @@ void* brazo_clasificado( void *arg){
     }
     
     return NULL;
+}
+
+void conteo_metricas(int tipo_producto,int duracion){
+        tiempo_total_acum+=duracion;
+        productos_procesados++;
+        switch (tipo_producto)
+        {
+        case 0:
+            producto_estandar++;
+            break;
+        case 1:
+            producto_refrigerado++;
+            break;
+        case 2:    
+            producto_ultra_delicado++;
+            break;
+        }
 }
 
 //Elegir el siguiente deposito destino del producto item
@@ -158,6 +164,7 @@ void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){
             pthread_mutex_unlock(&mutex_buzon);
 
             printf(COLOR_ROJO "\n BRAZO[%d] "COLOR_RESET "envio 1 dron con la plataforma.Esperando...\n",id_brazo);
+            sleep(2);      //Discapacidad severa de tiempo
             sem_wait(&sem_fin_viaje_brazo[id_brazo-1]);
             sem_post(&sem_drones_carga);
             sem_post(&sem_plataforma_levitacion); //libera la plataforma
