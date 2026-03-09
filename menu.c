@@ -2,6 +2,7 @@
 
 // Variable global para controlar ejecución
 int sistema_activo = 0;
+int probabilidad_valida;
 
 void iniciar_simulacion_segundos(int segundos) {
     printf("\nINICIANDO SIMULACIÓN POR %d SEGUNDOS...\n", segundos);
@@ -80,10 +81,16 @@ void menu_principal() {
                 break;
             case 2:
                 estandar = 0;
-                printf("Ingrese la Probabilidad del producto estandar (estandar - refrigerado - ultra delicado):\n");
-                scanf("%d", &prob_standar);
-                printf("Ingrese la Probabilidad del producto refrigerado (estandar - refrigerado - ultra delicado):\n");
-                scanf("%d", &prob_refrigerado);
+                do{
+                    probabilidad_valida = 1;
+                    printf("Ingrese la Probabilidad del producto estandar (estandar - refrigerado - ultra delicado):\n");
+                    scanf("%d", &prob_standar);
+                    printf("Ingrese la Probabilidad del producto refrigerado (estandar - refrigerado - ultra delicado):\n");
+                    scanf("%d", &prob_refrigerado);
+                    if(prob_standar + prob_refrigerado > 100){
+                        printf("Error: La suma de las probabilidades excede el 100%%\n");
+                        probabilidad_valida = 0;
+                }} while(!probabilidad_valida);
                 printf("Probabilidades = estandar %d%%, refrigerado %d%%, ultra delicado %d%%",prob_standar, prob_refrigerado, 100 - (prob_refrigerado + prob_standar));
                 break;
             case 3:
