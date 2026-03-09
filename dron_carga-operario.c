@@ -35,4 +35,5 @@ void* operario_almacen(void *arg){
         }
         pthread_mutex_unlock(&mutex_almacen); //da espacio al siguiente
     }
+    return NULL;
 }

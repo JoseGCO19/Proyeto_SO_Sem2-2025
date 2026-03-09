@@ -9,7 +9,6 @@
 
 
 void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
-
     while (1){ //garantiza que el dron nunca se detenga mientras el sistema este activo
         //FASE 1: entrada al recinto , solo 25 drones para la zona de cultivo
         int id_dron = *((int*)arg);                     //convertir el puntero generico a una direccion real int 
@@ -28,26 +27,11 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         pthread_mutex_unlock(&sem_sala_desinfeccion);
         //FASE 3: Cosecha
         
-        printf(COLOR_AMARILLO"\nDron[%d] con autorizacion. Recoleccion inicializada...\n",id_dron);
+        printf(COLOR_AMARILLO"\nDron[%d] con autorizacion. Recoleccion inicializada...\n" COLOR_RESET,id_dron);
         sleep(rand()%3+1); //simulacion , busqueda y recoleccion del producto
         //se crea el producto, simular recoleccion
         Producto nuevo_producto;
         nuevo_producto.tipo_producto = rand() %3;
-        //nuevo_producto.tipo_producto = frecuencias_pr[selector_frecuencia%4][rand()%12]; //selecciona un tipo de producto basado en la frecuencia seleccionada
-        pthread_mutex_lock(&mutex_contador_resultado);
-        //Se cuenta cuantos productos se han recolectado segun su tipo
-        switch (nuevo_producto.tipo_producto)
-        {
-        case 0:
-            producto_estandar++;
-            break;
-        case 1:
-            producto_refrigerado++;
-        default:    
-            producto_ultra_procesado++;
-            break;
-        }
-        pthread_mutex_unlock(&mutex_contador_resultado);
         //CLOCK_MONOTONIC asegura que el tiempo sea siempre creciente y preciso
         clock_gettime(CLOCK_MONOTONIC, &nuevo_producto.tiempo_inicio);
         //FASE 4: entrega en la zona de carga

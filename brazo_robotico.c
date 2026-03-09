@@ -40,6 +40,18 @@ void* brazo_clasificado( void *arg){
         pthread_mutex_lock(&mutex_metricas);
         tiempo_total_acum+=duracion;
         productos_procesados++;
+        switch (nuevo_pr_saliente.tipo_producto)
+        {
+        case 0:
+            producto_estandar++;
+            break;
+        case 1:
+            producto_refrigerado++;
+            break;
+        case 2:    
+            producto_ultra_procesado++;
+            break;
+        }
         printf(COLOR_AZUL "\n[METRICA]" COLOR_RESET " Promedio actual: %.2f ms\n", (tiempo_total_acum / productos_procesados));
         pthread_mutex_unlock(&mutex_metricas);
 

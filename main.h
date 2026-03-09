@@ -29,6 +29,34 @@ typedef struct {
 
 } Producto;
 
+extern void* agente_desinfeccion(void* arg);
+extern void* dron_recolector(void* arg);
+extern void* dron_carga(void *arg);
+extern void* operario_almacen(void *arg);
+extern void* brazo_clasificado(void *arg);
+extern void inicializar_hilos();
+extern void inicializar_sem();
+
+//FUNCIONES DEL MENU
+extern void menu_principal();
+extern void iniciar_simulacion_segundos(int segundos);
+extern void reiniciar_estado();
+extern void destruir_sem();
+extern void mostrar_resultados();
+
+//VARIABLE PARA CONTROLAR EJECUCIÓN
+extern int sistema_activo;  // 1 = ejecutar, 0 = detener
+
+//Hilos e ID's
+extern pthread_t drones[N_DRONES_PR];               //definicion de un array de 25 drones (hilos)
+extern int ids_drones[N_DRONES_PR];                 //ID's de los Drones de Recoleccion
+extern pthread_t drones_carga[M_DONES_CARGA];
+extern int ids_drones_carga[M_DONES_CARGA];
+extern pthread_t brazo[BRAZOS];
+extern int ids_brazo[BRAZOS];
+extern pthread_t operador_almacen;
+extern pthread_t hilo_agente;
+
 // Declaración de variables globales (EXPORT)
 
 //VARIABLE PARA DRONES_RECOLECTORES

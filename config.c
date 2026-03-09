@@ -11,7 +11,8 @@ void* dron_recolector(void* arg);
 void* dron_carga(void *arg);
 void* operario_almacen(void *arg);
 void* brazo_clasificado( void *arg);
-
+void inicializar_hilos();
+void inicializar_sem();
 
 //VARIABLE PARA DRONES_RECOLECTORES
 sem_t sem_cap_recoleccion;  //25                 //Limita la entrada al centro 
@@ -130,4 +131,22 @@ void inicializar_hilos(){
         pthread_create(&drones_carga[i], NULL, dron_carga,&ids_drones_carga[i]);
     }
     
+}
+
+//Mostrar resultados al finalizar simulación
+void mostrar_resultados() {
+    printf("\n═══════════════════════════════════════\n");
+    printf("    RESULTADOS DE LA SIMULACIÓN:\n");
+    printf("═══════════════════════════════════════\n");
+    printf("Total productos procesados: %d\n", productos_procesados);
+    printf("   ├─ Estándar    : %d\n", producto_estandar);
+    printf("   ├─ Refrigerado : %d\n", producto_refrigerado);
+    printf("   └─ Ultra       : %d\n", producto_ultra_procesado);
+    printf("Usos de plataforma magnética: %d\n", usos_plataforma);
+    printf("Bloqueos evitados: %d\n", bloqueos_evitados);
+    if (productos_procesados > 0) {
+        printf("Tiempo promedio: %.2f ms\n", 
+               tiempo_total_acum / productos_procesados);
+    }
+    printf("═══════════════════════════════════════\n");
 }
