@@ -40,12 +40,11 @@ extern void inicializar_sem();
 //FUNCIONES DEL MENU
 extern void menu_principal();
 extern void iniciar_simulacion_segundos(int segundos);
-extern void reiniciar_estado();
-extern void destruir_sem();
 extern void mostrar_resultados();
 
-//VARIABLE PARA CONTROLAR EJECUCIÓN
+//VARIABLE PARA CONTROLAR EJECUCIÓN EN EL MENU
 extern int opcion;                                  //Variable que especifica la opcion que tomo el usuario
+extern int estandar;                                //indica si la configuracion es estandar o no             
 
 //Hilos e ID's
 extern pthread_t drones[N_DRONES_PR];               //definicion de un array de 25 drones (hilos)
@@ -71,7 +70,8 @@ extern Producto buffer_descarga[CAP_ZONA_DESCARGA]; //[Zona de descarga], buffer
 extern pthread_mutex_t mutex_contador_resultado;
 extern int indice_productor;                         //lleva el conteo de cuantos productos hay
 extern int indice_consumidor;
-
+extern int prob_standar;
+extern int prob_ultradelicado;
 
 //VARIABLES PARA EL DEPOSITO
 extern int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado

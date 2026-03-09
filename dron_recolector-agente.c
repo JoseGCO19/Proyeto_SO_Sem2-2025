@@ -7,6 +7,7 @@
 
 #include "main.h"
 
+int elegir_producto();
 
 void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
     while (1){ //garantiza que el dron nunca se detenga mientras el sistema este activo
@@ -33,8 +34,8 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
         sleep(rand()%3+1);                              //simulacion , busqueda y recoleccion del producto
                                                         //se crea el producto, simular recoleccion
         Producto nuevo_producto;
-        nuevo_producto.tipo_producto = rand() %3;
-                                                        //CLOCK_MONOTONIC asegura que el tiempo sea siempre creciente y preciso
+        nuevo_producto.tipo_producto = elegir_producto();
+        //CLOCK_MONOTONIC asegura que el tiempo sea siempre creciente y preciso
         clock_gettime(CLOCK_MONOTONIC, &nuevo_producto.tiempo_inicio);
 
         //FASE 4: entrega en la zona de carga
@@ -58,6 +59,7 @@ void* dron_recolector(void *arg){ //el hilo de dron debe tener una idea
     }
     return NULL;
 }
+
 void* agente_desinfeccion(void* arg) {
     while(1) {                      //el agente siempre esta operando
                                     // El agente espera a que un dron lo llame (Fase 2 del dron)
@@ -70,4 +72,23 @@ void* agente_desinfeccion(void* arg) {
         sem_post(&sem_fin_des); 
     }
     return NULL;
+}
+
+int elegir_producto(){
+    if(estandar == 1){
+        return rand()%3;
+    }
+    else{
+        int producto;
+        producto = rand() % 100;
+        if(producto < prob_standar){
+            return 0;
+        }
+        else if(producto > prob_standar && producto < prob_ultradelicado){
+            return 1;
+        }
+        else{
+            return 2;
+        }
+    }
 }

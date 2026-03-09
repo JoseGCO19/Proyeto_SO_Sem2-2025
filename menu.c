@@ -58,6 +58,38 @@ void iniciar_simulacion_productos(int productos){
 }
 
 void menu_principal() {
+    printf("\n═══════════════════════════════════════\n");
+    printf("       Configuraciones preliminares\n");
+    printf("═══════════════════════════════════════\n");
+    printf("1. Seguir con la configuracion estandar (Probabilidades equitativas, 10 drones)\n");
+    printf("2. Cambiar la probabilidad de los productos\n");
+    printf("3. Cambiar la cantidad de drones que entran al recinto\n");
+    printf("4. Aplicar Cambios\n");
+    printf("═══════════════════════════════════════\n");
+    printf("Opción: ");
+    //Pide opción al usuario y ejecuta
+    scanf("%d", &opcion);
+    switch(opcion) {
+        case 1:
+            printf("Aplicando configuracion estandar\n");
+            estandar = 1;
+            break;
+        case 2:
+            printf("Ingrese la Probabilidad del producto estandar (estandar - refrigerado - ultra delicado):\n");
+            scanf("%d", &prob_standar);
+            printf("Ingrese la Probabilidad del producto refrigerado (estandar - refrigerado - ultra delicado):\n");
+            scanf("%d", &prob_ultradelicado);
+            break;
+        case 3:
+            printf("AUN NO (POR AHORA SE ESTA TRABAJANDO EN ELLO\n");
+            break;
+        case 4:
+            printf("Cambios aplicados.\n");
+            break;
+        default:
+            printf("Opción no válida\n");
+            break;
+        }
     int segundos; //Segundos que tardará la simulación
     //Muestra el menú principal
     printf("\n═══════════════════════════════════════\n");
@@ -88,5 +120,4 @@ void menu_principal() {
         default:
             printf("Opción no válida\n");
         }
-    
 }
