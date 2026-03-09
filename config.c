@@ -6,6 +6,9 @@
 
 #include "main.h"
 
+//VARIABLES GLOBALES
+int n_drones_pr = 25;
+
 void* agente_desinfeccion(void* arg);
 void* dron_recolector(void* arg);
 void* dron_carga(void *arg);
@@ -15,7 +18,7 @@ void inicializar_hilos();
 void inicializar_sem();
 
 //VARIABLES MENU
-int estandar = 0;
+int estandar = 1;
 int opcion;
 
 //VARIABLE PARA DRONES_RECOLECTORES
@@ -31,7 +34,7 @@ int indice_productor=0;
 int indice_consumidor=0;
 pthread_mutex_t mutex_contador_resultado;                     //lleva el conteo de cuantos productos hay
 int prob_standar;
-int prob_ultradelicado;
+int prob_refrigerado;
 
 
 //VARIABLES PARA EL DEPOSITO
@@ -43,8 +46,8 @@ pthread_mutex_t mutex_refri;                   //Permite editar el indice del ve
 char tipo_producto_str[3][20];                 //Vector de strings para imprimir el tipo de producto en texto
 
 //Hilos e ID's
-pthread_t drones[N_DRONES_PR];               //definicion de un array de 25 drones (hilos)
-int ids_drones[N_DRONES_PR];                 //ID's de los Drones de Recoleccion
+pthread_t* drones;               //definicion de un array de 25 drones (hilos)
+int* ids_drones;                 //ID's de los Drones de Recoleccion
 pthread_t drones_carga[M_DONES_CARGA];
 int ids_drones_carga[M_DONES_CARGA];
 pthread_t brazo[BRAZOS];
@@ -85,7 +88,7 @@ pthread_mutex_t mutex_dronCarga;
 //INICIALIZACION DE SEMAFOROS
 
 void inicializar_sem(){
-    sem_init(&sem_cap_recoleccion,0,N_DRONES_PR); //25 capacidad de drones 
+    sem_init(&sem_cap_recoleccion,0, DRONES_RECINTO); //25 capacidad de drones totales que el recinto puede soportar 
     pthread_mutex_init(&sem_sala_desinfeccion,NULL); //este por defecto se inicializa en 1
     sem_init(&sem_agente_des,0,0); //inicializado en 0 dado que debe espera que dron_recolector lo llame
     sem_init(&sem_fin_des,0,0);
@@ -126,8 +129,10 @@ void inicializar_hilos(){
     pthread_create(&hilo_agente, NULL, agente_desinfeccion, NULL); 
     //hilo para el operador
     pthread_create(&operador_almacen, NULL, operario_almacen, NULL);
+    drones = malloc(n_drones_pr * sizeof(pthread_t));
+    ids_drones = malloc(n_drones_pr * sizeof(int));
     //creacion de los hilos para los drones
-    for (int i = 0; i < N_DRONES_PR; i++){
+    for (int i = 0; i < n_drones_pr; i++){
         ids_drones[i]=i+1; //asignacion de los ids unicos 
         pthread_create(&drones[i], NULL, dron_recolector, &ids_drones[i]);
     }

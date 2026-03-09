@@ -84,7 +84,7 @@ int elegir_producto(){
         if(producto < prob_standar){
             return 0;
         }
-        else if(producto > prob_standar && producto < prob_ultradelicado){
+        else if(producto < (prob_standar + prob_refrigerado)){
             return 1;
         }
         else{

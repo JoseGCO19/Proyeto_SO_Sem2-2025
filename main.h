@@ -17,17 +17,21 @@
 #include <stdio.h>
 #include <stdlib.h>
 
-#define N_DRONES_PR 10
+//#define N_DRONES_PR 10
 #define CAP_ZONA_DESCARGA 10
 #define TOTAL_DEPOSITOS 8
 #define M_DONES_CARGA 4
 #define BRAZOS 3
+#define DRONES_RECINTO 25
 
 typedef struct {
     int tipo_producto;              //0: Tipo Estandar; 1:Tipo Refrigerado; 2:Tipo Ultra-delicado
     struct timespec tiempo_inicio;  //Lleva el tiempo que el producto desde que entro en el programa
 
 } Producto;
+
+//VARIABLES GLOBALES
+extern int n_drones_pr;
 
 extern void* agente_desinfeccion(void* arg);
 extern void* dron_recolector(void* arg);
@@ -47,8 +51,8 @@ extern int opcion;                                  //Variable que especifica la
 extern int estandar;                                //indica si la configuracion es estandar o no             
 
 //Hilos e ID's
-extern pthread_t drones[N_DRONES_PR];               //definicion de un array de 25 drones (hilos)
-extern int ids_drones[N_DRONES_PR];                 //ID's de los Drones de Recoleccion
+extern pthread_t* drones;               //definicion de un array de 25 drones (hilos)
+extern int* ids_drones;                 //ID's de los Drones de Recoleccion
 extern pthread_t drones_carga[M_DONES_CARGA];
 extern int ids_drones_carga[M_DONES_CARGA];
 extern pthread_t brazo[BRAZOS];
@@ -71,7 +75,7 @@ extern pthread_mutex_t mutex_contador_resultado;
 extern int indice_productor;                         //lleva el conteo de cuantos productos hay
 extern int indice_consumidor;
 extern int prob_standar;
-extern int prob_ultradelicado;
+extern int prob_refrigerado;
 
 //VARIABLES PARA EL DEPOSITO
 extern int deposito[TOTAL_DEPOSITOS];               //Vector que almacena la cantidad de cajas por deposito. 0-3:Estandar; 4-6:Refrigerado; 7:Ultra-Procesado
