@@ -43,7 +43,7 @@ void* brazo_clasificado( void *arg){
 
         //actualizar metricas 
         pthread_mutex_lock(&mutex_metricas);
-        if((productos_procesados == productos_necesarios) && (opcion==2)){
+        if((productos_procesados >= productos_necesarios) && (opcion==2)){
             sem_post(&sem_finalizo_producto);
         }
         conteo_metricas(nuevo_pr_saliente.tipo_producto,duracion);
@@ -142,7 +142,7 @@ void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){
             while (flag){
                 sem_wait(&sem_drones_carga);
                 if(sem_trywait(&sem_plataforma_levitacion)==0){
-                    printf(COLOR_ROJO "\n BRAZO[%d] " COLOR_RESET " reservo un dron y una " COLOR_MORADO "plataforma.\n" COLOR_RESET, id_brazo);
+                    printf(COLOR_ROJO "\n BRAZO[%d] " COLOR_RESET " reservo 1 dron y una " COLOR_MORADO "plataforma.\n" COLOR_RESET, id_brazo);
                     pthread_mutex_lock(&mutex_metricas_levitacion); 
                     usos_plataforma++;        //seccion critica , plataforma de levitacion
                     pthread_mutex_unlock(&mutex_metricas_levitacion);
