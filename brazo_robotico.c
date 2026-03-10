@@ -43,13 +43,10 @@ void* brazo_clasificado( void *arg){
 
         //actualizar metricas 
         pthread_mutex_lock(&mutex_metricas);
-        if((productos_procesados >= productos_necesarios) && (opcion==2)){
-            sem_post(&sem_finalizo_producto);
-        }
         conteo_metricas(nuevo_pr_saliente.tipo_producto,duracion);
         printf(COLOR_VERDE "\nBrazo[%d]" COLOR_RESET " Ha guardado un producto de tipo " COLOR_ROJO "%s" COLOR_RESET "\n",id_brazo,tipo_producto_str[nuevo_pr_saliente.tipo_producto]);
         printf(COLOR_AZUL "\n[METRICA]" COLOR_RESET " Promedio actual: %.2f ms\n", (tiempo_total_acum / productos_procesados));
-        if(productos_procesados == productos_necesarios){
+        if((productos_procesados >= productos_necesarios) && (opcion==2)){
             sem_post(&sem_finalizo_producto);
         }
         pthread_mutex_unlock(&mutex_metricas);
@@ -118,7 +115,7 @@ void despacho_dron(Producto nuevo_pr_saliente,int id_brazo){
                     pthread_mutex_lock(&mutex_metricas);
                     bloqueos_evitados++;
                     pthread_mutex_unlock(&mutex_metricas);
-                    printf(COLOR_AMARILLO "\nBRAZO[%d] " COLOR_ROJO "evito bloqueo por falta de drones. Reintentando... \n",id_brazo);
+                    printf(COLOR_AMARILLO "\nBRAZO[%d] " COLOR_ROJO "evito bloqueo por falta de drones. Reintentando... \n" COLOR_RESET ,id_brazo);
                     sleep(1);
                 }
             }

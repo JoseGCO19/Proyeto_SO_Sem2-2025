@@ -33,7 +33,7 @@ void iniciar_simulacion_segundos(int segundos) {
 }
 
 void iniciar_simulacion_productos(int productos){
-    if(productos!=0){
+    if(productos > 0){
         printf("\nINICIANDO SIMULACIÓN POR %d PRODUCTOS...\n", productos);
         //Inicializar semaforos
         inicializar_sem();
