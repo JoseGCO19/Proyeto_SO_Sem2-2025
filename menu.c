@@ -56,6 +56,8 @@ void iniciar_simulacion_productos(int productos){
         }
     }
     // Mostrar resultados
+    free(drones);
+    free(ids_drones);
     mostrar_resultados();
     printf("\nSimulación completada. Volviendo al menú...\n");
 }
